@@ -11,7 +11,7 @@ const pages = await getCollection('page');
 const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na coleção
 ---
 
-<Layout title={page?.data.title || "My Story Map"}>
+<Layout title={page?.data.title || "Descubra o Brasil: Uma Jornada Interativa"}>
   {page ? (
     page.data.sections.map((section) => {
       switch (section.type) {
