@@ -321,8 +321,8 @@ Você é um desenvolvedor experiente encarregado de criar um site one page inter
 
 **Checklist de Tarefas:**
 
-- [ ] Configurar o ambiente de desenvolvimento.
-- [ ] Instalar e configurar o Tailwind CSS.
+- [x] Configurar o ambiente de desenvolvimento.
+- [x] Instalar e configurar o Tailwind CSS.
 - [ ] Configurar o Decap CMS com a coleção e campos necessários.
 - [ ] Criar os componentes para cada tipo de seção.
 - [ ] Implementar a lógica para renderizar as seções dinamicamente.
