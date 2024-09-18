@@ -24,6 +24,7 @@ const pageCollection = defineCollection({
           latitude: z.number(),
           longitude: z.number(),
           zoom: z.number(),
+          geojson: z.string().optional(),
         }),
         z.object({
           type: z.literal('footer'),

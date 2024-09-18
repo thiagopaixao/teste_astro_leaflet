@@ -32,7 +32,12 @@ onMount(() => {
   });
 
   if (value.geojson) {
-    L.geoJSON(value.geojson).addTo(drawnItems);
+    try {
+      const geojsonData = JSON.parse(value.geojson);
+      L.geoJSON(geojsonData).addTo(drawnItems);
+    } catch (error) {
+      console.error('Erro ao analisar GeoJSON:', error);
+    }
   }
 
   map.on('pm:create', updateMapData);
