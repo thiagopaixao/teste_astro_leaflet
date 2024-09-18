@@ -12,6 +12,9 @@ const sortedSections = sections.sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Layout title="My Story Map">
+  <h1>Bem-vindo ao My Story Map</h1>
+  <p>Este é um conteúdo estático para teste.</p>
+  
   {sortedSections.map((section) => {
     switch (section.data.type) {
       case 'header':
