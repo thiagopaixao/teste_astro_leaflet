@@ -66,7 +66,8 @@ function updateMapData() {
 }
 
 function openGeoman() {
-  const url = `/geoman-editor?lat=${value.latitude}&lng=${value.longitude}&zoom=${value.zoom}&geojson=${encodeURIComponent(value.geojson || '')}`;
+  const baseUrl = value.geomanEditorLink || '/geoman-editor';
+  const url = `${baseUrl}?lat=${value.latitude}&lng=${value.longitude}&zoom=${value.zoom}&geojson=${encodeURIComponent(value.geojson || '')}`;
   window.open(url, '_blank', 'width=800,height=600');
 }
 
