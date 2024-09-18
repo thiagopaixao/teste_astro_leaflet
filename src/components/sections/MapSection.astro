@@ -1,4 +1,5 @@
 ---
+import { onMount } from 'astro';
 ---
 <section class="h-screen">
   <div id="map" class="w-full h-full"></div>
@@ -17,7 +18,7 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Integrar Geoman
+    // Integrate Geoman
     map.pm.addControls({
       position: 'topleft',
       drawCircle: false,
