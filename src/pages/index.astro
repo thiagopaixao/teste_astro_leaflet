@@ -8,24 +8,28 @@ import MapSection from '../components/sections/MapSection.astro';
 import Footer from '../components/sections/Footer.astro';
 
 const pages = await getCollection('page');
-const page = pages[0]; // Assumindo que temos apenas uma página
+const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na coleção
 ---
 
-<Layout title={page.data.title}>
-  {page.data.sections.map((section) => {
-    switch (section.type) {
-      case 'header':
-        return <Header backgroundImage={section.backgroundImage} title={section.title} />;
-      case 'text':
-        return <TextSection content={section.content} />;
-      case 'gallery':
-        return <Gallery images={section.images} />;
-      case 'map':
-        return <MapSection latitude={section.latitude} longitude={section.longitude} zoom={section.zoom} />;
-      case 'footer':
-        return <Footer content={section.content} />;
-      default:
-        return null;
-    }
-  })}
+<Layout title={page?.data.title || "My Story Map"}>
+  {page ? (
+    page.data.sections.map((section) => {
+      switch (section.type) {
+        case 'header':
+          return <Header backgroundImage={section.backgroundImage} title={section.title} />;
+        case 'text':
+          return <TextSection content={section.content} />;
+        case 'gallery':
+          return <Gallery images={section.images} />;
+        case 'map':
+          return <MapSection latitude={section.latitude} longitude={section.longitude} zoom={section.zoom} />;
+        case 'footer':
+          return <Footer content={section.content} />;
+        default:
+          return null;
+      }
+    })
+  ) : (
+    <p>Nenhum conteúdo encontrado. Por favor, adicione uma página no CMS.</p>
+  )}
 </Layout>
