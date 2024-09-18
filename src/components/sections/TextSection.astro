@@ -3,9 +3,7 @@ const { content } = Astro.props;
 ---
 <section class="py-8">
   <div class="container mx-auto">
-    <div class="prose">
-      {content}
-    </div>
+    <div class="prose" set:html={content}></div>
   </div>
 </section>
 ---
