@@ -323,10 +323,10 @@ Você é um desenvolvedor experiente encarregado de criar um site one page inter
 
 - [x] Configurar o ambiente de desenvolvimento.
 - [x] Instalar e configurar o Tailwind CSS.
-- [ ] Configurar o Decap CMS com a coleção e campos necessários.
-- [ ] Criar os componentes para cada tipo de seção.
-- [ ] Implementar a lógica para renderizar as seções dinamicamente.
-- [ ] Integrar o Leaflet e o Geoman para o mapa interativo.
+- [x] Configurar o Decap CMS com a coleção e campos necessários.
+- [x] Criar os componentes para cada tipo de seção.
+- [x] Implementar a lógica para renderizar as seções dinamicamente.
+- [x] Integrar o Leaflet e o Geoman para o mapa interativo.
 - [ ] Garantir a responsividade e estilização adequada.
 - [ ] Testar todas as funcionalidades do site.
 - [ ] Realizar o build de produção e implantar o site.
