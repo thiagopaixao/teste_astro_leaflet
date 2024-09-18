@@ -51,14 +51,49 @@ function updateMapData() {
     latitude: center.lat,
     longitude: center.lng,
     zoom: map.getZoom(),
-    geojson: drawnItems.toGeoJSON()
+    geojson: JSON.stringify(drawnItems.toGeoJSON())
   };
   
   dispatch('change', newValue);
 }
+
+function openGeoman() {
+  const url = `/geoman-editor?lat=${value.latitude}&lng=${value.longitude}&zoom=${value.zoom}&geojson=${encodeURIComponent(value.geojson || '')}`;
+  window.open(url, '_blank', 'width=800,height=600');
+}
+
+onMount(() => {
+  // ... (código existente)
+
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.geojson) {
+      value = event.data;
+      updateMap();
+      dispatch('change', value);
+    }
+  });
+});
+
+function updateMap() {
+  if (map) {
+    map.setView([value.latitude, value.longitude], value.zoom);
+    drawnItems.clearLayers();
+    if (value.geojson) {
+      try {
+        const geojsonData = JSON.parse(value.geojson);
+        L.geoJSON(geojsonData).addTo(drawnItems);
+      } catch (error) {
+        console.error('Erro ao analisar GeoJSON:', error);
+      }
+    }
+  }
+}
 </script>
 
 <div bind:this={mapContainer} style="width: 100%; height: 400px;"></div>
+<button on:click={openGeoman} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+  Abrir Editor Geoman
+</button>
 
 <style>
   @import 'leaflet/dist/leaflet.css';
