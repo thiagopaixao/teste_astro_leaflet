@@ -43,6 +43,14 @@ onMount(() => {
   map.on('pm:create', updateMapData);
   map.on('pm:remove', updateMapData);
   map.on('moveend', updateMapData);
+
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.geojson) {
+      value = event.data;
+      updateMap();
+      dispatch('change', value);
+    }
+  });
 });
 
 function updateMapData() {
@@ -62,18 +70,6 @@ function openGeoman() {
   window.open(url, '_blank', 'width=800,height=600');
 }
 
-onMount(() => {
-  // ... (código existente)
-
-  window.addEventListener('message', (event) => {
-    if (event.data && event.data.geojson) {
-      value = event.data;
-      updateMap();
-      dispatch('change', value);
-    }
-  });
-});
-
 function updateMap() {
   if (map) {
     map.setView([value.latitude, value.longitude], value.zoom);
@@ -91,7 +87,7 @@ function updateMap() {
 </script>
 
 <div bind:this={mapContainer} style="width: 100%; height: 400px;"></div>
-<button on:click={openGeoman} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+<button on:click={openGeoman} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
   Abrir Editor Geoman
 </button>
 
