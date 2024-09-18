@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/sections/Header.astro';
+import TextSection from '../components/sections/TextSection.astro';
+import Gallery from '../components/sections/Gallery.astro';
+import MapSection from '../components/sections/MapSection.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const sections = await getCollection('sections');
+const sortedSections = sections.sort((a, b) => a.data.order - b.data.order);
+---
+
+<Layout title="Story Map">
+  {sortedSections.map((section) => {
+    switch (section.data.type) {
+      case 'header':
+        return <Header content={section.data.content} />;
+      case 'text':
+        return <TextSection content={section.data.content} />;
+      case 'gallery':
+        return <Gallery images={section.data.images} />;
+      case 'map':
+        return <MapSection />;
+      case 'footer':
+        return <Footer content={section.data.content} />;
+      default:
+        return null;
+    }
+  })}
+</Layout>
