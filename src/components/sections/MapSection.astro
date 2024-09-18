@@ -8,11 +8,15 @@ const { latitude, longitude, zoom } = Astro.props;
   </div>
 </section>
 
-<script define:vars={{ latitude, longitude, zoom }}>
+<script>
   import L from 'leaflet';
   import '@geoman-io/leaflet-geoman-free';
 
   document.addEventListener('DOMContentLoaded', () => {
+    const latitude = {latitude};
+    const longitude = {longitude};
+    const zoom = {zoom};
+
     const map = L.map('map').setView([latitude, longitude], zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
