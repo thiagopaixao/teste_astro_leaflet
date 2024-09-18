@@ -87,6 +87,7 @@ function updateMap() {
 </script>
 
 <div bind:this={mapContainer} style="width: 100%; height: 400px;"></div>
+<textarea bind:value={value.geojson} placeholder="GeoJSON (opcional)" rows="4" class="w-full mt-2 p-2 border rounded"></textarea>
 <button on:click={openGeoman} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
   Abrir Editor Geoman
 </button>

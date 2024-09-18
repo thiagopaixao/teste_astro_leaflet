@@ -44,7 +44,8 @@ collections:
               - { label: "Latitude", name: "latitude", widget: "number", valueType: "float" }
               - { label: "Longitude", name: "longitude", widget: "number", valueType: "float" }
               - { label: "Zoom", name: "zoom", widget: "number", valueType: "int" }
-              - { label: "GeoJSON", name: "geojson", widget: "text", default: "{}", hint: "Insira o GeoJSON manualmente se necessário" }
+              - { label: "GeoJSON", name: "geojson", widget: "text", required: false, default: "{}", hint: "Insira o GeoJSON manualmente se necessário" }
+              - { label: "Abrir Editor Geoman", name: "openGeoman", widget: "button", default: "Abrir Editor Geoman" }
           - label: "Rodapé"
             name: "footer"
             widget: "object"
