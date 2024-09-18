@@ -22,7 +22,7 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
         case 'gallery':
           return <Gallery images={section.images} />;
         case 'map':
-          return <MapSection latitude={section.latitude} longitude={section.longitude} zoom={section.zoom} />;
+          return <MapSection latitude={section.latitude || -14.235004} longitude={section.longitude || -51.92528} zoom={section.zoom || 4} />;
         case 'footer':
           return <Footer content={section.content} />;
         default:
