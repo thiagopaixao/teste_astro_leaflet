@@ -1,15 +1,39 @@
 import { z, defineCollection } from 'astro:content';
 
-const sectionsCollection = defineCollection({
+const pageCollection = defineCollection({
   type: 'content',
   schema: z.object({
-    type: z.enum(["header", "text", "gallery", "map", "footer"]),
-    content: z.string().optional(),
-    images: z.array(z.string()).optional(),
-    order: z.number(),
+    title: z.string(),
+    sections: z.array(
+      z.union([
+        z.object({
+          type: z.literal('header'),
+          backgroundImage: z.string(),
+          title: z.string(),
+        }),
+        z.object({
+          type: z.literal('text'),
+          content: z.string(),
+        }),
+        z.object({
+          type: z.literal('gallery'),
+          images: z.array(z.string()),
+        }),
+        z.object({
+          type: z.literal('map'),
+          latitude: z.number(),
+          longitude: z.number(),
+          zoom: z.number(),
+        }),
+        z.object({
+          type: z.literal('footer'),
+          content: z.string(),
+        }),
+      ])
+    ),
   }),
 });
 
 export const collections = {
-  sections: sectionsCollection,
+  page: pageCollection,
 };

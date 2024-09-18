@@ -7,23 +7,23 @@ import Gallery from '../components/sections/Gallery.astro';
 import MapSection from '../components/sections/MapSection.astro';
 import Footer from '../components/sections/Footer.astro';
 
-const sections = await getCollection('sections');
-const sortedSections = sections.sort((a, b) => a.data.order - b.data.order);
+const pages = await getCollection('page');
+const page = pages[0]; // Assumindo que temos apenas uma página
 ---
 
-<Layout title="My Story Map">
-  {sortedSections.map((section) => {
-    switch (section.data.type) {
+<Layout title={page.data.title}>
+  {page.data.sections.map((section) => {
+    switch (section.type) {
       case 'header':
-        return <Header content={section.data.content} />;
+        return <Header backgroundImage={section.backgroundImage} title={section.title} />;
       case 'text':
-        return <TextSection content={section.body} />;
+        return <TextSection content={section.content} />;
       case 'gallery':
-        return <Gallery images={section.data.images} />;
+        return <Gallery images={section.images} />;
       case 'map':
-        return <MapSection />;
+        return <MapSection latitude={section.latitude} longitude={section.longitude} zoom={section.zoom} />;
       case 'footer':
-        return <Footer content={section.body} />;
+        return <Footer content={section.content} />;
       default:
         return null;
     }

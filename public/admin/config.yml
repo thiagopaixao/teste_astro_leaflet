@@ -6,13 +6,45 @@ media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
-  - name: "sections"
-    label: "Seções"
-    folder: "src/content/sections"
+  - name: "page"
+    label: "Página"
+    folder: "src/content"
     create: true
-    slug: "{{uuid}}"
+    slug: "{{slug}}"
     fields:
-      - { label: "Tipo de Seção", name: "type", widget: "select", options: ["header", "text", "gallery", "map", "footer"] }
-      - { label: "Conteúdo", name: "content", widget: "markdown" }
-      - { label: "Imagens", name: "images", widget: "list", field: { label: "Imagem", name: "image", widget: "image" }, required: false }
-      - { label: "Ordem", name: "order", widget: "number" }
+      - { label: "Título", name: "title", widget: "string" }
+      - label: "Seções"
+        name: "sections"
+        widget: "list"
+        types:
+          - label: "Cabeçalho"
+            name: "header"
+            widget: "object"
+            fields:
+              - { label: "Imagem de Fundo", name: "backgroundImage", widget: "image" }
+              - { label: "Título", name: "title", widget: "string" }
+          - label: "Texto"
+            name: "text"
+            widget: "object"
+            fields:
+              - { label: "Conteúdo", name: "content", widget: "markdown" }
+          - label: "Galeria"
+            name: "gallery"
+            widget: "object"
+            fields:
+              - label: "Imagens"
+                name: "images"
+                widget: "list"
+                field: { label: "Imagem", name: "image", widget: "image" }
+          - label: "Mapa"
+            name: "map"
+            widget: "object"
+            fields:
+              - { label: "Latitude", name: "latitude", widget: "number", valueType: "float" }
+              - { label: "Longitude", name: "longitude", widget: "number", valueType: "float" }
+              - { label: "Zoom", name: "zoom", widget: "number", valueType: "int", min: 1, max: 20 }
+          - label: "Rodapé"
+            name: "footer"
+            widget: "object"
+            fields:
+              - { label: "Conteúdo", name: "content", widget: "markdown" }
