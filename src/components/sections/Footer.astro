@@ -6,3 +6,10 @@ const { content } = Astro.props;
     {content}
   </div>
 </footer>
+---
+const { content } = Astro.props;
+---
+
+<footer class="bg-gray-800 text-white py-4">
+  <div class="container mx-auto text-center" set:html={content}></div>
+</footer>

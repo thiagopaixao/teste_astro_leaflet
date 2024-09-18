@@ -8,3 +8,12 @@ const { content } = Astro.props;
     </div>
   </div>
 </section>
+---
+const { content } = Astro.props;
+---
+
+<section class="py-8">
+  <div class="container mx-auto">
+    <div class="prose" set:html={content}></div>
+  </div>
+</section>
