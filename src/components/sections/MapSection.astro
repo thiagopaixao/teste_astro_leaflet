@@ -1,8 +1,11 @@
 ---
 const { latitude, longitude, zoom } = Astro.props;
 ---
-<section class="h-screen">
-  <div id="map" class="w-full h-full"></div>
+<section class="py-16 bg-gray-100">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">Explore o Mapa do Brasil</h2>
+    <div id="map" class="w-full h-[600px] rounded-lg shadow-lg"></div>
+  </div>
 </section>
 
 <script define:vars={{ latitude, longitude, zoom }}>
@@ -15,6 +18,21 @@ const { latitude, longitude, zoom } = Astro.props;
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+
+    // Adicionar marcadores para as regiões
+    const regions = [
+      { name: 'Norte', lat: -3.0, lon: -60.0 },
+      { name: 'Nordeste', lat: -12.0, lon: -41.0 },
+      { name: 'Centro-Oeste', lat: -15.8, lon: -52.0 },
+      { name: 'Sudeste', lat: -22.0, lon: -43.0 },
+      { name: 'Sul', lat: -27.0, lon: -51.0 }
+    ];
+
+    regions.forEach(region => {
+      L.marker([region.lat, region.lon])
+        .addTo(map)
+        .bindPopup(`<b>Região ${region.name}</b><br>Clique para explorar!`);
+    });
 
     // Integrate Geoman
     map.pm.addControls({
