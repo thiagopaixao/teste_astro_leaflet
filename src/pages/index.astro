@@ -17,13 +17,13 @@ const sortedSections = sections.sort((a, b) => a.data.order - b.data.order);
       case 'header':
         return <Header content={section.data.content} />;
       case 'text':
-        return <TextSection content={section.data.content} />;
+        return <TextSection content={section.body} />;
       case 'gallery':
         return <Gallery images={section.data.images} />;
       case 'map':
         return <MapSection />;
       case 'footer':
-        return <Footer content={section.data.content} />;
+        return <Footer content={section.body} />;
       default:
         return null;
     }

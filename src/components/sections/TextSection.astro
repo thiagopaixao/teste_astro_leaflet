@@ -1,9 +1,10 @@
 ---
 const { content } = Astro.props;
+import { marked } from 'marked';
 ---
 <section class="py-8">
   <div class="container mx-auto">
-    <div class="prose" set:html={content}></div>
+    <div class="prose" set:html={marked.parse(content)}></div>
   </div>
 </section>
 ---
