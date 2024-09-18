@@ -49,3 +49,6 @@ collections:
             widget: "object"
             fields:
               - { label: "Conteúdo", name: "content", widget: "markdown" }
+
+custom_widgets:
+  map: "src/admin/widgets/MapWidget.js"

@@ -1,26 +1,57 @@
 ---
 const { latitude, longitude, zoom } = Astro.props;
 ---
+
 <section class="py-16 bg-gray-100">
   <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">Explore o Mapa do Brasil</h2>
-    <div id="map" class="w-full h-[600px] rounded-lg shadow-lg"></div>
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">
+      Explore o Mapa do Brasil
+    </h2>
+    <div
+      id="map"
+      class="w-full h-[600px] rounded-lg shadow-lg"
+      data-latitude={latitude}
+      data-longitude={longitude}
+      data-zoom={zoom}
+    ></div>
   </div>
 </section>
 
-<script>
-  import L from 'leaflet';
-  import '@geoman-io/leaflet-geoman-free';
+<!-- Inclua o CSS do Leaflet e Geoman -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  crossorigin=""
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.0/dist/leaflet-geoman.css"
+  crossorigin=""
+/>
 
+<!-- Inclua o JS do Leaflet e Geoman -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  crossorigin=""
+></script>
+<script
+  src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.0/dist/leaflet-geoman.min.js"
+  crossorigin=""
+></script>
+
+<!-- Script para inicializar o mapa -->
+<script is:inline>
   function initMap() {
-    const latitude = {latitude};
-    const longitude = {longitude};
-    const zoom = {zoom};
+    const mapElement = document.getElementById('map');
+
+    const latitude = parseFloat(mapElement.dataset.latitude);
+    const longitude = parseFloat(mapElement.dataset.longitude);
+    const zoom = parseInt(mapElement.dataset.zoom, 10);
 
     const map = L.map('map').setView([latitude, longitude], zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+      attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
     // Adicionar marcadores para as regiões
@@ -29,22 +60,25 @@ const { latitude, longitude, zoom } = Astro.props;
       { name: 'Nordeste', lat: -12.0, lon: -41.0 },
       { name: 'Centro-Oeste', lat: -15.8, lon: -52.0 },
       { name: 'Sudeste', lat: -22.0, lon: -43.0 },
-      { name: 'Sul', lat: -27.0, lon: -51.0 }
+      { name: 'Sul', lat: -27.0, lon: -51.0 },
     ];
 
-    regions.forEach(region => {
+    regions.forEach((region) => {
       L.marker([region.lat, region.lon])
         .addTo(map)
         .bindPopup(`<b>Região ${region.name}</b><br>Clique para explorar!`);
     });
 
-    // Integrate Geoman
+    // Integrar Geoman
     map.pm.addControls({
       position: 'topleft',
       drawCircle: false,
     });
   }
 
-  // Aguarde o carregamento completo do DOM antes de inicializar o mapa
-  document.addEventListener('DOMContentLoaded', initMap);
+  if (document.readyState === 'complete') {
+    initMap();
+  } else {
+    window.addEventListener('load', initMap);
+  }
 </script>
