@@ -12,7 +12,7 @@ const { latitude, longitude, zoom } = Astro.props;
   import L from 'leaflet';
   import '@geoman-io/leaflet-geoman-free';
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function initMap() {
     const latitude = {latitude};
     const longitude = {longitude};
     const zoom = {zoom};
@@ -43,5 +43,12 @@ const { latitude, longitude, zoom } = Astro.props;
       position: 'topleft',
       drawCircle: false,
     });
-  });
+  }
+
+  // Verifica se o documento já foi carregado
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMap);
+  } else {
+    initMap();
+  }
 </script>

@@ -2,7 +2,7 @@
 title: "Descubra o Brasil: Uma Jornada Interativa"
 sections:
   - type: "header"
-    backgroundImage: "/uploads/brasil-panorama.jpg"
+    backgroundImage: "/brasil-panorama.jpg"
     title: "Bem-vindo à Jornada pelo Brasil"
   - type: "text"
     content: |
@@ -18,12 +18,12 @@ sections:
       - Culinária diversificada e saborosa de norte a sul
   - type: "gallery"
     images:
-      - "/uploads/rio-janeiro.jpg"
-      - "/uploads/amazonia.jpg"
-      - "/uploads/salvador-pelourinho.jpg"
-      - "/uploads/pantanal.jpg"
-      - "/uploads/foz-iguacu.jpg"
-      - "/uploads/carnaval.jpg"
+      - "/rio-janeiro.jpg"
+      - "/amazonia.jpg"
+      - "/salvador-pelourinho.jpg"
+      - "/pantanal.jpg"
+      - "/foz-iguacu.jpg"
+      - "/carnaval.jpg"
   - type: "text"
     content: |
       ## Descubra Cada Região
