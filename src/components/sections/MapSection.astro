@@ -1,5 +1,4 @@
 ---
-import { onMount } from 'astro';
 ---
 <section class="h-screen">
   <div id="map" class="w-full h-full"></div>
@@ -19,30 +18,6 @@ import { onMount } from 'astro';
     }).addTo(map);
 
     // Integrate Geoman
-    map.pm.addControls({
-      position: 'topleft',
-      drawCircle: false,
-    });
-  });
-</script>
----
----
-
-<section class="h-screen">
-  <div id="map" class="w-full h-full"></div>
-</section>
-
-<script>
-  import L from 'leaflet';
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const map = L.map('map').setView([0, 0], 2);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(map);
-
-    // Integrar Geoman
     map.pm.addControls({
       position: 'topleft',
       drawCircle: false,
