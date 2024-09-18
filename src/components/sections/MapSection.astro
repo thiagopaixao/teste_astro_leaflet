@@ -45,10 +45,5 @@ const { latitude, longitude, zoom } = Astro.props;
     });
   }
 
-  // Verifica se o documento já foi carregado
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMap);
-  } else {
-    initMap();
-  }
+  document.addEventListener('astro:page-load', initMap);
 </script>
