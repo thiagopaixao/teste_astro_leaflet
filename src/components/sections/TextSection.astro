@@ -1,10 +1,17 @@
 ---
 const { content } = Astro.props;
 import { marked } from 'marked';
+import { gfmHeadingId } from 'marked-gfm-heading-id';
+import { mangle } from 'marked-mangle';
+
+marked.use(gfmHeadingId());
+marked.use(mangle());
+
+const htmlContent = marked.parse(content);
 ---
 <section class="py-8">
   <div class="container mx-auto">
-    <div class="prose" set:html={marked.parse(content)}></div>
+    <div class="prose" set:html={htmlContent}></div>
   </div>
 </section>
 ---
