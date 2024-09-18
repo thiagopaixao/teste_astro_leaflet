@@ -9,7 +9,7 @@ public_folder: "/uploads"
 collections:
   - name: "page"
     label: "Página"
-    folder: "src/content"
+    folder: "src/content/page"
     create: true
     slug: "{{slug}}"
     fields:
