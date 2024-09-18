@@ -39,12 +39,16 @@ collections:
                 field: { label: "Imagem", name: "image", widget: "image" }
           - label: "Mapa"
             name: "map"
-            widget: "map"
+            widget: "object"
+            fields:
+              - { label: "Latitude", name: "latitude", widget: "number", valueType: "float" }
+              - { label: "Longitude", name: "longitude", widget: "number", valueType: "float" }
+              - { label: "Zoom", name: "zoom", widget: "number", valueType: "int" }
+              - { label: "GeoJSON", name: "geojson", widget: "code", default: "{}", language: "json" }
           - label: "Rodapé"
             name: "footer"
             widget: "object"
             fields:
               - { label: "Conteúdo", name: "content", widget: "markdown" }
 
-custom_widgets:
-  map: "src/admin/widgets/MapWidget.js"
+local_backend: true
