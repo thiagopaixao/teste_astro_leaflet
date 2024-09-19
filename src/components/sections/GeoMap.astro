@@ -168,27 +168,82 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           return;
         }
 
-        // Remove a camada atual
-        if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length && geoJsonLayers[currentLayerIndex]) {
-          map.removeLayer(geoJsonLayers[currentLayerIndex]);
+        const fadeOutDuration = 300; // Duração da animação de fade out em milissegundos
+        const fadeInDuration = 300; // Duração da animação de fade in em milissegundos
+
+        // Função para fazer o fade out de uma camada
+        function fadeOutLayer(layer, callback) {
+          let opacity = 1;
+          const fadeOutInterval = setInterval(() => {
+            opacity -= 0.1;
+            if (opacity <= 0) {
+              clearInterval(fadeOutInterval);
+              map.removeLayer(layer);
+              callback();
+            } else {
+              layer.setStyle({ opacity: opacity, fillOpacity: opacity / 2 });
+            }
+          }, fadeOutDuration / 10);
         }
 
-        // Adiciona a nova camada
-        if (targetIndex >= 0 && targetIndex < geoJsonLayers.length) {
-          const newLayer = geoJsonLayers[targetIndex];
-          if (newLayer) {
-            map.addLayer(newLayer);
+        // Função para fazer o fade in de uma camada
+        function fadeInLayer(layer) {
+          let opacity = 0;
+          layer.setStyle({ opacity: 0, fillOpacity: 0 });
+          map.addLayer(layer);
+          const fadeInInterval = setInterval(() => {
+            opacity += 0.1;
+            if (opacity >= 1) {
+              clearInterval(fadeInInterval);
+            } else {
+              layer.setStyle({ opacity: opacity, fillOpacity: opacity / 2 });
+            }
+          }, fadeInDuration / 10);
+        }
 
-            // Ajusta a visualização para a nova camada
-            map.fitBounds(newLayer.getBounds(), {
-              animate: false
+        // Remove a camada atual com fade out
+        if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length && geoJsonLayers[currentLayerIndex]) {
+          fadeOutLayer(geoJsonLayers[currentLayerIndex], () => {
+            // Adiciona a nova camada com fade in
+            if (targetIndex >= 0 && targetIndex < geoJsonLayers.length) {
+              const newLayer = geoJsonLayers[targetIndex];
+              if (newLayer) {
+                fadeInLayer(newLayer);
+
+                // Ajusta a visualização para a nova camada
+                map.fitBounds(newLayer.getBounds(), {
+                  animate: true,
+                  duration: 0.5
+                });
+              }
+            } else if (targetIndex === -1) {
+              // Retorna à visualização inicial quando não há camada
+              map.setView([latitude, longitude], zoom, {
+                animate: true,
+                duration: 0.5
+              });
+            }
+          });
+        } else {
+          // Se não houver camada atual, apenas adiciona a nova camada com fade in
+          if (targetIndex >= 0 && targetIndex < geoJsonLayers.length) {
+            const newLayer = geoJsonLayers[targetIndex];
+            if (newLayer) {
+              fadeInLayer(newLayer);
+
+              // Ajusta a visualização para a nova camada
+              map.fitBounds(newLayer.getBounds(), {
+                animate: true,
+                duration: 0.5
+              });
+            }
+          } else if (targetIndex === -1) {
+            // Retorna à visualização inicial quando não há camada
+            map.setView([latitude, longitude], zoom, {
+              animate: true,
+              duration: 0.5
             });
           }
-        } else if (targetIndex === -1) {
-          // Retorna à visualização inicial quando não há camada
-          map.setView([latitude, longitude], zoom, {
-            animate: false
-          });
         }
 
         currentLayerIndex = targetIndex;
