@@ -206,15 +206,11 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           let targetIndex;
           if (scrollProgress < firstLayerThreshold) {
             // Carrega o primeiro GeoJSON com maior atraso
-            if (currentLayerIndex === -1 && scrollProgress >= 0.7) {
-              const firstLayer = loadGeoJsonLayer(0);
-              if (firstLayer) {
-                map.addLayer(firstLayer);
-                currentLayerIndex = 0;
-                console.log('First GeoJSON layer loaded');
-              }
+            if (scrollProgress >= 0.7) {
+              targetIndex = 0;
+            } else {
+              targetIndex = -1; // Não exibe nenhuma camada
             }
-            targetIndex = 0;
           } else {
             targetIndex = Math.min(Math.floor((scrollProgress - firstLayerThreshold) / segmentSize) + 1, numLayers - 1);
           }
@@ -230,6 +226,16 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
       }
 
+      let lastScrollPosition = window.pageYOffset;
+
+      function onScroll() {
+        const currentScrollPosition = window.pageYOffset;
+        const scrollDirection = currentScrollPosition > lastScrollPosition ? 'down' : 'up';
+        lastScrollPosition = currentScrollPosition;
+
+        checkScrollAndAnimate(scrollDirection);
+      }
+
       // Adiciona o evento de scroll com throttle
       let lastKnownScrollPosition = 0;
       let ticking = false;
@@ -239,11 +245,9 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       }
 
       window.addEventListener('scroll', function(e) {
-        lastKnownScrollPosition = window.scrollY;
-
         if (!ticking) {
           window.requestAnimationFrame(function() {
-            onScroll(lastKnownScrollPosition);
+            onScroll();
             ticking = false;
           });
 
