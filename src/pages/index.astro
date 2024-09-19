@@ -29,10 +29,8 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
             latitude={section.latitude || -26.0793776} 
             longitude={section.longitude || -53.0789724} 
             zoom={section.zoom || 4}
-            geojson={section.geojson}
+            geojsons={section.geojsons}
             typelayer={section.typelayer || 'map'}
-            title={section.title || ''}
-            content={section.content || ''}
           />;
         case 'footer':
           return <Footer content={section.content} />;
