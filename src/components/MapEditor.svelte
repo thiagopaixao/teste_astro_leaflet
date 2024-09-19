@@ -65,9 +65,6 @@ onMount(() => {
 function updateMapData() {
   const center = map.getCenter();
   const geojsonData = drawnItems.toGeoJSON();
-  if (geojsonData.features.length === 0) {
-    geojsonData.features = [];
-  }
   const newValue = {
     latitude: center.lat,
     longitude: center.lng,
@@ -75,7 +72,19 @@ function updateMapData() {
     geojson: JSON.stringify(geojsonData)
   };
   
+  value = newValue;
   dispatch('change', newValue);
+}
+
+function exportGeoJSON() {
+  const geojsonData = drawnItems.toGeoJSON();
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojsonData, null, 2));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "map_data.geojson");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
 }
 
 function openGeoman() {
@@ -120,6 +129,9 @@ function updateMap() {
 <textarea bind:value={value.geojson} placeholder="GeoJSON (opcional)" rows="4" class="w-full mt-2 p-2 border rounded"></textarea>
 <button on:click={openGeoman} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
   Abrir Editor Geoman
+</button>
+<button on:click={exportGeoJSON} class="mt-2 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+  Exportar GeoJSON
 </button>
 
 <style>
