@@ -43,14 +43,274 @@ sections:
     zoom: 4
     typelayer: satellite
     geojsons:
-      - geojson: >-
-          {"type":"FeatureCollection","features":[
-            {"type":"Feature","properties":{"name":"Norte","popupContent":"Região Norte"},"geometry":{"type":"Point","coordinates":[-64.951172,-4.477856]}},
-            {"type":"Feature","properties":{"name":"Nordeste","popupContent":"Região Nordeste"},"geometry":{"type":"Point","coordinates":[-41.308594,-12.297068]}},
-            {"type":"Feature","properties":{"name":"Centro-Oeste","popupContent":"Região Centro-Oeste"},"geometry":{"type":"Point","coordinates":[-53.4375,-9.709057]}},
-            {"type":"Feature","properties":{"name":"Sudeste","popupContent":"Região Sudeste"},"geometry":{"type":"Point","coordinates":[-44.296875,-19.55979]}},
-            {"type":"Feature","properties":{"name":"Sul","popupContent":"Região Sul"},"geometry":{"type":"Point","coordinates":[-53.085938,-26.509905]}}
-          ]}
+      - geojson: |-
+          {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -78.310547,
+                    0.79099
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -64.599609,
+                    -9.535749
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -41.835938,
+                    -16.383391
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -41.044922,
+                    -9.622414
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -52.470703,
+                    -10.401378
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -46.933594,
+                    -22.674847
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -55.195313,
+                    -25.562265
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -50.537109,
+                    -18.39623
+                  ]
+                }
+              }
+            ]
+          }
+      - geojson: |-
+          {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -59.677734,
+                        -9.535749
+                      ],
+                      [
+                        -55.283203,
+                        -16.045813
+                      ],
+                      [
+                        -51.503906,
+                        -12.382928
+                      ],
+                      [
+                        -59.677734,
+                        -9.535749
+                      ]
+                    ]
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -47.724609,
+                        -6.489983
+                      ],
+                      [
+                        -45.439453,
+                        -15.792254
+                      ],
+                      [
+                        -39.287109,
+                        -16.045813
+                      ],
+                      [
+                        -37.441406,
+                        -8.146243
+                      ],
+                      [
+                        -47.724609,
+                        -6.489983
+                      ]
+                    ]
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -53.349609,
+                    -18.812718
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -50.185547,
+                    -14.093957
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -54.052734,
+                    -8.928487
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -45.439453,
+                    -15.792254
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -40.605469,
+                    -10.660608
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -48.603516,
+                    -21.698265
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -48.164063,
+                    -17.811456
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -45.791016,
+                    -20.055931
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -47.330491,
+                    -17.549869
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -47.330491,
+                    -17.549869
+                  ]
+                }
+              }
+            ]
+          }
   - type: text
     content: |-
       ## Prepare-se para a Aventura
