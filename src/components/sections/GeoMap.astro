@@ -11,16 +11,17 @@ interface Props {
 const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
 ---
 
-<section class="container mx-auto my-8">
-  <h2 class="text-3xl font-bold mb-4">{title}</h2>
-  <div class="prose max-w-none mb-4" set:html={content} />
-  <div id="map" class="map-container" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
+<section class="relative w-full h-screen">
+  <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
+    <h2 class="text-3xl font-bold mb-4">{title}</h2>
+    <div class="prose max-w-none mb-4 text-white" set:html={content} />
+  </div>
+  <div id="map" class="absolute inset-0" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
 </section>
 
 <style>
-  .map-container {
-    height: 400px;
-    width: 100%;
+  .prose :global(*) {
+    color: white;
   }
 </style>
 
@@ -37,10 +38,17 @@ const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
     const zoom = Number(mapElement.dataset.zoom);
     const geojsonString = mapElement.dataset.geojson;
 
-    const map = L.map('map').setView([latitude, longitude], zoom);
+    const map = L.map('map', {
+      zoomControl: false  // Desativa o controle de zoom padrão
+    }).setView([latitude, longitude], zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Adiciona o controle de zoom no canto superior direito
+    L.control.zoom({
+      position: 'topright'
     }).addTo(map);
 
     if (geojsonString) {
@@ -52,6 +60,17 @@ const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
         console.error('Error parsing GeoJSON:', error);
       }
     }
+
+    // Função para redimensionar o mapa
+    function resizeMap() {
+      map.invalidateSize();
+    }
+
+    // Redimensiona o mapa quando a janela é redimensionada
+    window.addEventListener('resize', resizeMap);
+
+    // Redimensiona o mapa após um curto atraso para garantir que todos os elementos estejam carregados
+    setTimeout(resizeMap, 250);
   }
 
   // Initialize the map when the DOM is fully loaded
