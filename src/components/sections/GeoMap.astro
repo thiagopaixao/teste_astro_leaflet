@@ -42,16 +42,17 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       const geojsonsString = mapElement.dataset.geojsons;
 
       const map = L.map(mapElement.id, {
-        zoomControl: false,  // Desativa o controle de zoom padrão
-        scrollWheelZoom: false,  // Desativa o zoom com a roda do mouse
-        doubleClickZoom: false,  // Desativa o zoom com duplo clique
-        touchZoom: false,  // Desativa o zoom com toque (para dispositivos móveis)
-        boxZoom: false,  // Desativa o zoom com caixa de seleção
-        keyboard: false,  // Desativa o zoom com teclado
-        zoomSnap: 0,  // Desativa o snap de zoom
-        zoomDelta: 0,  // Desativa o delta de zoom
-        minZoom: zoom,  // Define o zoom mínimo como o zoom inicial
-        maxZoom: zoom  // Define o zoom máximo como o zoom inicial
+        zoomControl: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        touchZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        zoomSnap: 0,
+        zoomDelta: 0,
+        dragging: false,
+        minZoom: zoom,
+        maxZoom: zoom
       }).setView([latitude, longitude], zoom);
 
       const mapTypes = {
@@ -100,46 +101,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
       });
 
-      // Adiciona um controle de zoom personalizado
-      const zoomControl = L.control({position: 'topright'});
-      zoomControl.onAdd = function(map) {
-        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        container.style.backgroundColor = 'white';
-        container.style.padding = '5px';
-
-        const zoomInButton = L.DomUtil.create('a', 'leaflet-control-zoom-in', container);
-        zoomInButton.innerHTML = '+';
-        zoomInButton.href = '#';
-        zoomInButton.style.display = 'block';
-        zoomInButton.style.textAlign = 'center';
-        zoomInButton.style.fontWeight = 'bold';
-        zoomInButton.style.fontSize = '18px';
-        zoomInButton.style.textDecoration = 'none';
-        zoomInButton.style.color = 'black';
-
-        const zoomOutButton = L.DomUtil.create('a', 'leaflet-control-zoom-out', container);
-        zoomOutButton.innerHTML = '−';
-        zoomOutButton.href = '#';
-        zoomOutButton.style.display = 'block';
-        zoomOutButton.style.textAlign = 'center';
-        zoomOutButton.style.fontWeight = 'bold';
-        zoomOutButton.style.fontSize = '18px';
-        zoomOutButton.style.textDecoration = 'none';
-        zoomOutButton.style.color = 'black';
-
-        L.DomEvent.on(zoomInButton, 'click', function(e) {
-          e.preventDefault();
-          map.setView(map.getCenter(), map.getZoom() + 1, {animate: true});
-        });
-
-        L.DomEvent.on(zoomOutButton, 'click', function(e) {
-          e.preventDefault();
-          map.setView(map.getCenter(), map.getZoom() - 1, {animate: true});
-        });
-
-        return container;
-      };
-      zoomControl.addTo(map);
+      // O controle de zoom personalizado foi removido
 
       let geoJsonLayers = [];
       let currentLayerIndex = 0;
@@ -194,20 +156,29 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         if (geoJsonLayers.length <= 1 || isAnimating) return;
 
         isAnimating = true;
-        map.removeLayer(geoJsonLayers[currentLayerIndex]);
+
+        // Remove a camada atual
+        if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length) {
+          map.removeLayer(geoJsonLayers[currentLayerIndex]);
+        }
+
+        // Adiciona a nova camada
         map.addLayer(geoJsonLayers[targetIndex]);
 
+        // Ajusta a visualização para a nova camada
         map.fitBounds(geoJsonLayers[targetIndex].getBounds(), {
           animate: true,
-          duration: 1, // duração da animação em segundos
-          easeLinearity: 0.5
+          duration: 1,
+          easeLinearity: 0.5,
+          paddingTopLeft: [0, 0],
+          paddingBottomRight: [0, 0]
         });
 
         currentLayerIndex = targetIndex;
 
         setTimeout(() => {
           isAnimating = false;
-        }, 1000); // Aguarda o fim da animação
+        }, 1000);
       }
 
       // Função para verificar o scroll e animar para a próxima ou anterior camada
