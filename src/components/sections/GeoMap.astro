@@ -13,8 +13,8 @@ interface Props {
 const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = Astro.props;
 ---
 
-<section class="relative w-full h-screen">
-  <div class="sticky top-0 w-full h-screen">
+<section class="relative w-full h-[300vh]">
+  <div class="sticky top-0 w-full h-screen overflow-hidden">
     <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
       <h2 class="text-3xl font-bold mb-4">{title}</h2>
       <div class="prose max-w-none mb-4 text-white" set:html={content} />
@@ -184,7 +184,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       function checkScrollAndAnimate() {
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const scrollProgress = (viewportHeight - mapRect.top) / (viewportHeight + mapRect.height);
+        const sectionHeight = mapElement.parentElement.parentElement.offsetHeight;
+        const scrollProgress = window.pageYOffset / (sectionHeight - viewportHeight);
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
@@ -194,13 +195,9 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
       }
 
-      // Variável para armazenar a última posição de scroll
-      let lastScrollTop = 0;
-
       // Adiciona o evento de scroll com throttle
       let ticking = false;
       window.addEventListener('scroll', function() {
-        const st = window.pageYOffset || document.documentElement.scrollTop;
         if (!ticking) {
           window.requestAnimationFrame(function() {
             checkScrollAndAnimate();
@@ -208,31 +205,34 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           });
           ticking = true;
         }
-        lastScrollTop = st <= 0 ? 0 : st; // Para navegadores móveis
       });
 
-      // Função para verificar se o mapa está completamente fora da visualização
-      function isMapOutOfView() {
-        const mapRect = mapElement.getBoundingClientRect();
-        return mapRect.bottom <= 0;
-      }
+      // Função para animar a transição entre camadas GeoJSON
+      function animateToLayer(targetIndex) {
+        if (geoJsonLayers.length <= 1 || isAnimating) return;
 
-      // Modifica a função checkScrollAndAnimate para permitir o scroll após o mapa
-      function checkScrollAndAnimate() {
-        if (isMapOutOfView()) {
-          return; // Permite o scroll normal após o mapa
+        isAnimating = true;
+
+        // Remove a camada atual
+        if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length) {
+          map.removeLayer(geoJsonLayers[currentLayerIndex]);
         }
 
-        const mapRect = mapElement.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const scrollProgress = (viewportHeight - mapRect.top) / (viewportHeight + mapRect.height);
+        // Adiciona a nova camada
+        map.addLayer(geoJsonLayers[targetIndex]);
 
-        if (scrollProgress >= 0 && scrollProgress <= 1) {
-          const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
-          if (targetIndex !== currentLayerIndex) {
-            animateToLayer(targetIndex);
-          }
-        }
+        // Ajusta a visualização para a nova camada
+        map.fitBounds(geoJsonLayers[targetIndex].getBounds(), {
+          animate: true,
+          duration: 1.5, // Aumenta a duração da animação
+          easeLinearity: 0.25, // Torna a animação mais suave
+        });
+
+        currentLayerIndex = targetIndex;
+
+        setTimeout(() => {
+          isAnimating = false;
+        }, 1500); // Aumenta o tempo de espera para corresponder à duração da animação
       }
 
       // Função para manter sempre uma camada GeoJSON visível
