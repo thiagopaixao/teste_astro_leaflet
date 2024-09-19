@@ -13,7 +13,7 @@ interface Props {
 const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = Astro.props;
 ---
 
-<section class="relative w-full h-[300vh]">
+<section class="relative w-full h-[400vh]">
   <div class="sticky top-0 w-full h-screen overflow-hidden">
     <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
       <h2 class="text-3xl font-bold mb-4">{title}</h2>
@@ -104,7 +104,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       });
 
       let geoJsonLayers = [];
-      let currentLayerIndex = 0;
+      let currentLayerIndex = -1;
       let isAnimating = false;
 
       if (geojsonsString) {
@@ -137,12 +137,6 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           }).filter(layer => layer !== null);
 
           console.log('GeoJSON Layers:', geoJsonLayers);
-
-          if (geoJsonLayers.length > 0) {
-            geoJsonLayers[0].addTo(map);
-            const group = L.featureGroup(geoJsonLayers);
-            map.fitBounds(group.getBounds());
-          }
         } catch (error) {
           console.error('Error parsing GeoJSONs:', error);
         }
@@ -152,7 +146,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
       // Função para animar a transição entre camadas GeoJSON
       function animateToLayer(targetIndex) {
-        if (geoJsonLayers.length <= 1 || isAnimating) return;
+        if (geoJsonLayers.length === 0 || isAnimating) return;
 
         isAnimating = true;
 
@@ -167,17 +161,15 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         // Ajusta a visualização para a nova camada
         map.fitBounds(geoJsonLayers[targetIndex].getBounds(), {
           animate: true,
-          duration: 1,
-          easeLinearity: 0.5,
-          paddingTopLeft: [0, 0],
-          paddingBottomRight: [0, 0]
+          duration: 1.5,
+          easeLinearity: 0.25,
         });
 
         currentLayerIndex = targetIndex;
 
         setTimeout(() => {
           isAnimating = false;
-        }, 1000);
+        }, 1500);
       }
 
       // Função para verificar o scroll e animar para a próxima ou anterior camada
@@ -185,7 +177,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         const sectionHeight = mapElement.parentElement.parentElement.offsetHeight;
-        const scrollProgress = window.pageYOffset / (sectionHeight - viewportHeight);
+        const scrollProgress = (window.pageYOffset - mapRect.top) / (sectionHeight - viewportHeight);
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
@@ -206,46 +198,6 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           ticking = true;
         }
       });
-
-      // Função para animar a transição entre camadas GeoJSON
-      function animateToLayer(targetIndex) {
-        if (geoJsonLayers.length <= 1 || isAnimating) return;
-
-        isAnimating = true;
-
-        // Remove a camada atual
-        if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length) {
-          map.removeLayer(geoJsonLayers[currentLayerIndex]);
-        }
-
-        // Adiciona a nova camada
-        map.addLayer(geoJsonLayers[targetIndex]);
-
-        // Ajusta a visualização para a nova camada
-        map.fitBounds(geoJsonLayers[targetIndex].getBounds(), {
-          animate: true,
-          duration: 1.5, // Aumenta a duração da animação
-          easeLinearity: 0.25, // Torna a animação mais suave
-        });
-
-        currentLayerIndex = targetIndex;
-
-        setTimeout(() => {
-          isAnimating = false;
-        }, 1500); // Aumenta o tempo de espera para corresponder à duração da animação
-      }
-
-      // Função para manter sempre uma camada GeoJSON visível
-      function ensureVisibleLayer() {
-        if (geoJsonLayers.length > 0) {
-          if (!map.hasLayer(geoJsonLayers[currentLayerIndex])) {
-            map.addLayer(geoJsonLayers[currentLayerIndex]);
-          }
-        }
-      }
-
-      // Chama a função para garantir que uma camada esteja sempre visível
-      ensureVisibleLayer();
 
       // Função para redimensionar o mapa
       function resizeMap() {
