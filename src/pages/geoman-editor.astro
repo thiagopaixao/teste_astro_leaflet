@@ -12,7 +12,11 @@ import Layout from '../layouts/Layout.astro';
     let map;
     let drawnItems;
 
-    document.addEventListener('DOMContentLoaded', () => {
+    let mapInitialized = false;
+
+    function initializeMap() {
+      if (mapInitialized) return;
+
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const lat = parseFloat(urlParams.get('lat')) || -14.235004;
@@ -46,21 +50,24 @@ import Layout from '../layouts/Layout.astro';
         map.on('moveend', updateParent);
 
         console.log('Mapa inicializado com sucesso');
+        mapInitialized = true;
       } catch (error) {
         console.error('Erro ao inicializar o mapa:', error);
       }
-    });
+    }
 
     function updateParent() {
-      const center = map.getCenter();
-      const newValue = {
-        latitude: center.lat,
-        longitude: center.lng,
-        zoom: map.getZoom(),
-        geojson: JSON.stringify(drawnItems.toGeoJSON())
-      };
-      
+      if (!map) return;
+
       try {
+        const center = map.getCenter();
+        const newValue = {
+          latitude: center.lat,
+          longitude: center.lng,
+          zoom: map.getZoom(),
+          geojson: JSON.stringify(drawnItems.toGeoJSON())
+        };
+        
         if (window.opener && typeof window.opener.postMessage === 'function') {
           window.opener.postMessage(newValue, '*');
         } else {
@@ -71,13 +78,12 @@ import Layout from '../layouts/Layout.astro';
       }
     }
 
-    // Adicione esta função para lidar com erros gerais
     function handleError(error) {
       console.error('Erro capturado:', error);
     }
 
-    // Adicione um listener de erro global
     window.addEventListener('error', handleError);
+    window.addEventListener('load', initializeMap);
 
     window.exportGeoJSON = function() {
       const geoJSONData = drawnItems.toGeoJSON();

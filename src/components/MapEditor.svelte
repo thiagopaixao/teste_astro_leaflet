@@ -81,7 +81,19 @@ function updateMapData() {
 function openGeoman() {
   const baseUrl = value.geomanEditorLink || '/geoman-editor';
   const url = `${baseUrl}?lat=${value.latitude}&lng=${value.longitude}&zoom=${value.zoom}&geojson=${encodeURIComponent(value.geojson || '')}`;
-  window.open(url, '_blank', 'width=800,height=600');
+  const geomanWindow = window.open(url, '_blank', 'width=800,height=600');
+
+  if (geomanWindow) {
+    window.addEventListener('message', (event) => {
+      if (event.source === geomanWindow) {
+        value = { ...value, ...event.data };
+        updateMap();
+        dispatch('change', value);
+      }
+    });
+  } else {
+    console.error('Não foi possível abrir a janela do Geoman Editor');
+  }
 }
 
 function updateMap() {

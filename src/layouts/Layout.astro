@@ -17,5 +17,12 @@ const { title } = Astro.props;
     <slot />
     <script is:inline src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script is:inline src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.11.4/dist/leaflet-geoman.min.js"></script>
+    <script is:inline>
+      window.addEventListener('load', () => {
+        if (typeof L !== 'undefined' && L.PM && typeof L.PM.initialize === 'function') {
+          L.PM.initialize({ optIn: true });
+        }
+      });
+    </script>
   </body>
 </html>
