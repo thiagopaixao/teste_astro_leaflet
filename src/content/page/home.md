@@ -41,77 +41,113 @@ sections:
     latitude: -14
     longitude: -51
     zoom: 4
-    typelayer: map
-    geojson: |-
-      {
-        "type": "FeatureCollection",
-        "features": [
+    typelayer: satellite
+    geojsons:
+      - geojson: |-
           {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -53.173828,
-                -21.207459
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -46.845703,
-                -17.392579
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -53.789063,
-                -12.983148
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    -56.689453,
-                    -12.039321
-                  ],
-                  [
-                    -52.470703,
-                    -25.720735
-                  ],
-                  [
-                    -41.572266,
-                    -16.299051
-                  ],
-                  [
-                    -51.591797,
-                    -7.100893
-                  ],
-                  [
-                    -56.689453,
-                    -12.039321
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -64.951172,
+                    -4.477856
                   ]
-                ]
-              ]
-            }
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -46.845703,
+                    -6.83917
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -53.4375,
+                    -9.709057
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -41.308594,
+                    -12.297068
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -52.294922,
+                    -19.394068
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -53.085938,
+                    -26.509905
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -44.296875,
+                    -19.55979
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -50.888672,
+                    -13.923404
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -58.710938,
+                    -12.811801
+                  ]
+                }
+              }
+            ]
           }
-        ]
-      }
   - type: text
     content: |-
       ## Prepare-se para a Aventura
@@ -119,105 +155,6 @@ sections:
       Seja você um amante da natureza, um entusiasta da cultura ou simplesmente alguém em busca de novas experiências, o Brasil tem algo especial para oferecer. Use este guia interativo para planejar sua próxima aventura e descobrir as maravilhas deste país incrível.
 
       Está pronto para começar sua jornada? Explore as seções acima e deixe-se encantar pela magia do Brasil!
-  - type: map
-    latitude: -14
-    longitude: -51
-    zoom: 4
-    typelayer: satellite
-    geojson: |-
-      {
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -59.941406,
-                -5.703448
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -43.505859,
-                -5.003394
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -36.826172,
-                -7.275292
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -45.791016,
-                -12.983148
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -45.703125,
-                -18.895893
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -55.107422,
-                -14.349548
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -52.294922,
-                -23.885838
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {},
-            "geometry": {
-              "type": "Point",
-              "coordinates": [
-                -52.646484,
-                -30.221102
-              ]
-            }
-          }
-        ]
-      }
   - type: footer
     content: © 2024 Descubra o Brasil. Todos os direitos reservados. | Desenvolvido com ❤️ por entusiastas do Brasil
 ---
