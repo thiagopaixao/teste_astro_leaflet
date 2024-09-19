@@ -30,7 +30,7 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
             longitude={section.longitude || -53.0789724} 
             zoom={section.zoom || 4}
             geojson={section.geojson}
-            mapType={section.mapType}
+            mapType={section.mapType || 'map'}
             title={section.title || ''}
             content={section.content || ''}
           />;

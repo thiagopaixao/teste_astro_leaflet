@@ -60,11 +60,14 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         }
       };
 
-      const selectedMapType = mapTypes[mapElement.dataset.maptype || 'map'];
+      const mapType = mapElement.dataset.maptype || 'map';
+      const selectedMapType = mapTypes[mapType];
 
       L.tileLayer(selectedMapType.url, {
         attribution: selectedMapType.attribution
       }).addTo(map);
+
+      console.log(`Map ${mapElement.id} initialized with type: ${mapType}`);
 
       // Adiciona o controle de zoom no canto superior direito
       L.control.zoom({
