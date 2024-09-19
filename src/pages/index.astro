@@ -14,7 +14,7 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
 
 <Layout title={page?.data.title || "Descubra o Brasil: Uma Jornada Interativa"}>
   {page ? (
-    page.data.sections.map((section) => {
+    page.data.sections.map((section, index) => {
       switch (section.type) {
         case 'header':
           return <Header backgroundImage={section.backgroundImage} title={section.title} />;
@@ -23,13 +23,13 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
         case 'gallery':
           return <Gallery images={section.images} />;
         case 'map':
-          // return <MapSection latitude={section.latitude || -14.235004} longitude={section.longitude || -51.92528} zoom={section.zoom || 4} />;
           return <GeoMap 
+            key={`map-${index}`}
             latitude={section.latitude || -26.0793776} 
             longitude={section.longitude || -53.0789724} 
             zoom={section.zoom || 4}
             geojson={section.geojson}
-          />
+          />;
         case 'footer':
           return <Footer content={section.content} />;
         default:
