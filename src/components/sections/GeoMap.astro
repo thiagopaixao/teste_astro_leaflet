@@ -177,8 +177,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       function checkScrollAndAnimate() {
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const sectionHeight = mapElement.parentElement.offsetHeight;
-        const scrollProgress = (window.pageYOffset - mapRect.top + viewportHeight) / sectionHeight;
+        const scrollProgress = (viewportHeight - mapRect.top) / (viewportHeight + mapRect.height);
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
@@ -211,6 +210,9 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
       // Chama a função de animação inicialmente para garantir que a primeira camada seja exibida
       checkScrollAndAnimate();
+
+      // Adiciona um listener para o evento 'resize' para recalcular quando a janela for redimensionada
+      window.addEventListener('resize', checkScrollAndAnimate);
 
       // Função para redimensionar o mapa
       function resizeMap() {
