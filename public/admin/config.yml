@@ -45,7 +45,13 @@ collections:
               - { label: "Longitude", name: "longitude", widget: "number", valueType: "float" }
               - { label: "Zoom", name: "zoom", widget: "number", valueType: "int" }
               - { label: "Tipo de Camada", name: "typelayer", widget: "select", options: ["map", "topology", "satellite"]}
-              - { label: "GeoJSON", name: "geojson", widget: "text", required: false, default: "{}", hint: "Insira o GeoJSON manualmente se necessário" }
+              - label: "GeoJSONs"
+                name: "geojsons"
+                widget: "list"
+                fields:
+                  - { label: "GeoJSON", name: "geojson", widget: "text", required: false, default: "{}", hint: "Insira o GeoJSON manualmente se necessário" }
+                allow_add: true
+                add_to_top: false
           - label: "Rodapé"
             name: "footer"
             widget: "object"

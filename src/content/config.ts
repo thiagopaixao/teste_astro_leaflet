@@ -25,7 +25,7 @@ const pageCollection = defineCollection({
           longitude: z.number(),
           zoom: z.number(),
           typelayer: z.enum(['map', 'topology', 'satellite']).default('map'),
-          geojson: z.string().optional(),
+          geojsons: z.array(z.string()).optional(),
         }),
         z.object({
           type: z.literal('footer'),
