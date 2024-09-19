@@ -186,16 +186,20 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         const scrollProgress = (viewportHeight - mapRect.top) / viewportHeight;
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
-          const targetIndex = Math.floor(scrollProgress * geoJsonLayers.length);
+          const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
           if (targetIndex !== currentLayerIndex) {
             animateToLayer(targetIndex);
           }
         }
       }
 
+      // Variável para armazenar a última posição de scroll
+      let lastScrollTop = 0;
+
       // Adiciona o evento de scroll com throttle
       let ticking = false;
       window.addEventListener('scroll', function() {
+        const st = window.pageYOffset || document.documentElement.scrollTop;
         if (!ticking) {
           window.requestAnimationFrame(function() {
             checkScrollAndAnimate();
@@ -203,7 +207,20 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           });
           ticking = true;
         }
+        lastScrollTop = st <= 0 ? 0 : st; // Para navegadores móveis
       });
+
+      // Função para manter sempre uma camada GeoJSON visível
+      function ensureVisibleLayer() {
+        if (geoJsonLayers.length > 0) {
+          if (!map.hasLayer(geoJsonLayers[currentLayerIndex])) {
+            map.addLayer(geoJsonLayers[currentLayerIndex]);
+          }
+        }
+      }
+
+      // Chama a função para garantir que uma camada esteja sempre visível
+      ensureVisibleLayer();
 
       // Função para redimensionar o mapa
       function resizeMap() {
