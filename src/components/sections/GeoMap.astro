@@ -42,7 +42,16 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       const geojsonsString = mapElement.dataset.geojsons;
 
       const map = L.map(mapElement.id, {
-        zoomControl: false  // Desativa o controle de zoom padrão
+        zoomControl: false,  // Desativa o controle de zoom padrão
+        scrollWheelZoom: false,  // Desativa o zoom com a roda do mouse
+        doubleClickZoom: false,  // Desativa o zoom com duplo clique
+        touchZoom: false,  // Desativa o zoom com toque (para dispositivos móveis)
+        boxZoom: false,  // Desativa o zoom com caixa de seleção
+        keyboard: false,  // Desativa o zoom com teclado
+        zoomSnap: 0,  // Desativa o snap de zoom
+        zoomDelta: 0,  // Desativa o delta de zoom
+        minZoom: zoom,  // Define o zoom mínimo como o zoom inicial
+        maxZoom: zoom  // Define o zoom máximo como o zoom inicial
       }).setView([latitude, longitude], zoom);
 
       const mapTypes = {
@@ -91,10 +100,46 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
       });
 
-      // Adiciona o controle de zoom no canto superior direito
-      L.control.zoom({
-        position: 'topright'
-      }).addTo(map);
+      // Adiciona um controle de zoom personalizado
+      const zoomControl = L.control({position: 'topright'});
+      zoomControl.onAdd = function(map) {
+        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        container.style.backgroundColor = 'white';
+        container.style.padding = '5px';
+
+        const zoomInButton = L.DomUtil.create('a', 'leaflet-control-zoom-in', container);
+        zoomInButton.innerHTML = '+';
+        zoomInButton.href = '#';
+        zoomInButton.style.display = 'block';
+        zoomInButton.style.textAlign = 'center';
+        zoomInButton.style.fontWeight = 'bold';
+        zoomInButton.style.fontSize = '18px';
+        zoomInButton.style.textDecoration = 'none';
+        zoomInButton.style.color = 'black';
+
+        const zoomOutButton = L.DomUtil.create('a', 'leaflet-control-zoom-out', container);
+        zoomOutButton.innerHTML = '−';
+        zoomOutButton.href = '#';
+        zoomOutButton.style.display = 'block';
+        zoomOutButton.style.textAlign = 'center';
+        zoomOutButton.style.fontWeight = 'bold';
+        zoomOutButton.style.fontSize = '18px';
+        zoomOutButton.style.textDecoration = 'none';
+        zoomOutButton.style.color = 'black';
+
+        L.DomEvent.on(zoomInButton, 'click', function(e) {
+          e.preventDefault();
+          map.setView(map.getCenter(), map.getZoom() + 1, {animate: true});
+        });
+
+        L.DomEvent.on(zoomOutButton, 'click', function(e) {
+          e.preventDefault();
+          map.setView(map.getCenter(), map.getZoom() - 1, {animate: true});
+        });
+
+        return container;
+      };
+      zoomControl.addTo(map);
 
       let geoJsonLayers = [];
       let currentLayerIndex = 0;
