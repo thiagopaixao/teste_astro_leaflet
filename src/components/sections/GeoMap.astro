@@ -1,15 +1,21 @@
 ---
 interface Props {
+  title: string;
+  content: string;
   latitude: number;
   longitude: number;
   zoom: number;
   geojson?: string;
 }
 
-const { latitude, longitude, zoom, geojson } = Astro.props;
+const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
 ---
 
-<div id="map" class="map-container" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
+<section class="container mx-auto my-8">
+  <h2 class="text-3xl font-bold mb-4">{title}</h2>
+  <div class="prose max-w-none mb-4" set:html={content} />
+  <div id="map" class="map-container" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
+</section>
 
 <style>
   .map-container {
@@ -40,48 +46,18 @@ const { latitude, longitude, zoom, geojson } = Astro.props;
     if (geojsonString) {
       try {
         const geojson = JSON.parse(geojsonString);
-        L.geoJSON(geojson).addTo(map);
+        const geoJsonLayer = L.geoJSON(geojson).addTo(map);
+        map.fitBounds(geoJsonLayer.getBounds());
       } catch (error) {
         console.error('Error parsing GeoJSON:', error);
       }
     }
   }
 
-  // Inicializar o mapa quando o DOM estiver totalmente carregado
+  // Initialize the map when the DOM is fully loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMap);
   } else {
     initMap();
   }
-</script>---
-const { title, content, geojson } = Astro.props;
----
-
-<section class="container mx-auto my-8">
-  <h2 class="text-3xl font-bold mb-4">{title}</h2>
-  <div class="prose max-w-none mb-4" set:html={content} />
-  <div id="map" class="h-96 w-full"></div>
-</section>
-
-<script define:vars={{ geojson }}>
-  import L from 'leaflet';
-  import 'leaflet/dist/leaflet.css';
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const map = L.map('map').setView([0, 0], 2);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    if (geojson) {
-      try {
-        const geoJsonData = JSON.parse(geojson);
-        const geoJsonLayer = L.geoJSON(geoJsonData).addTo(map);
-        map.fitBounds(geoJsonLayer.getBounds());
-      } catch (error) {
-        console.error('Error processing GeoJSON:', error);
-      }
-    }
-  });
 </script>
