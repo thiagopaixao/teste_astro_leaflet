@@ -73,11 +73,11 @@ import Layout from '../layouts/Layout.astro';
         document.body.appendChild(modal);
         
         // Definir o valor do textarea após o modal ser adicionado ao DOM
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           const textarea = document.getElementById('geoJsonOutput');
           textarea.value = jsonString;
           textarea.scrollTop = 0; // Rola para o topo do textarea
-        }, 0);
+        });
         
         document.getElementById('copyButton').addEventListener('click', () => {
           const textarea = document.getElementById('geoJsonOutput');
