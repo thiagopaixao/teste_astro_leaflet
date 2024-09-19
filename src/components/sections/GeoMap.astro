@@ -96,14 +96,18 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         position: 'topright'
       }).addTo(map);
 
+      let geoJsonLayers = [];
+      let currentLayerIndex = 0;
+
       if (geojsonsString) {
         try {
           const geojsons = JSON.parse(geojsonsString);
-          console.log('Parsed GeoJSONs:', geojsons); // Log para depuração
-          const geoJsonLayers = geojsons.map(geojsonString => {
+          console.log('Parsed GeoJSONs:', geojsons);
+
+          geoJsonLayers = geojsons.map(geojsonString => {
             try {
               const geojson = JSON.parse(geojsonString);
-              console.log('Individual GeoJSON:', geojson); // Log para depuração
+              console.log('Individual GeoJSON:', geojson);
               return L.geoJSON(geojson, {
                 style: function (feature) {
                   return {
@@ -117,16 +121,17 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
                     layer.bindPopup(feature.properties.popupContent);
                   }
                 }
-              }).addTo(map);
+              });
             } catch (error) {
               console.error('Error parsing individual GeoJSON:', error);
               return null;
             }
           }).filter(layer => layer !== null);
-          
-          console.log('GeoJSON Layers:', geoJsonLayers); // Log para depuração
-          
+
+          console.log('GeoJSON Layers:', geoJsonLayers);
+
           if (geoJsonLayers.length > 0) {
+            geoJsonLayers[0].addTo(map);
             const group = L.featureGroup(geoJsonLayers);
             map.fitBounds(group.getBounds());
           }
@@ -134,8 +139,35 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           console.error('Error parsing GeoJSONs:', error);
         }
       } else {
-        console.log('No GeoJSONs found'); // Log para depuração
+        console.log('No GeoJSONs found');
       }
+
+      // Função para animar a transição entre camadas GeoJSON
+      function animateToNextLayer() {
+        if (geoJsonLayers.length <= 1) return;
+
+        map.removeLayer(geoJsonLayers[currentLayerIndex]);
+        currentLayerIndex = (currentLayerIndex + 1) % geoJsonLayers.length;
+        map.addLayer(geoJsonLayers[currentLayerIndex]);
+
+        map.fitBounds(geoJsonLayers[currentLayerIndex].getBounds(), {
+          animate: true,
+          duration: 1 // duração da animação em segundos
+        });
+      }
+
+      // Função para verificar o scroll e animar para a próxima camada
+      function checkScrollAndAnimate() {
+        const mapRect = mapElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        if (mapRect.top < viewportHeight && mapRect.bottom > 0) {
+          animateToNextLayer();
+        }
+      }
+
+      // Adiciona o evento de scroll
+      window.addEventListener('scroll', checkScrollAndAnimate);
 
       // Função para redimensionar o mapa
       function resizeMap() {
