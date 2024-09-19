@@ -149,6 +149,16 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         return null;
       }
 
+      // Carrega todos os GeoJSONs inicialmente
+      function loadAllGeoJsonLayers() {
+        geojsons.forEach((_, index) => {
+          loadGeoJsonLayer(index);
+        });
+      }
+
+      // Chama a função para carregar todos os GeoJSONs
+      loadAllGeoJsonLayers();
+
       // Função para animar a transição entre camadas GeoJSON
       let transitionQueue = [];
       let isTransitioning = false;
@@ -166,9 +176,9 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           map.removeLayer(geoJsonLayers[currentLayerIndex]);
         }
 
-        // Carrega e adiciona a nova camada
-        if (targetIndex >= 0) {
-          const newLayer = loadGeoJsonLayer(targetIndex);
+        // Adiciona a nova camada
+        if (targetIndex >= 0 && targetIndex < geoJsonLayers.length) {
+          const newLayer = geoJsonLayers[targetIndex];
           if (newLayer) {
             map.addLayer(newLayer);
 
