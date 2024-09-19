@@ -21,7 +21,6 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
     </div>
     <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons?.map(g => g.geojson))} data-typelayer={typelayer}></div>
   </div>
-  <div class="h-[500vh]"></div>
 </section>
 
 <style>
@@ -43,7 +42,11 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       const zoom = Number(mapElement.dataset.zoom);
       const geojsonsString = mapElement.dataset.geojsons;
 
-      const map = L.map(mapElement.id).setView([latitude, longitude], zoom);
+      const map = L.map(mapElement.id, {
+        scrollWheelZoom: false,
+        dragging: false,
+        zoomControl: false
+      }).setView([latitude, longitude], zoom);
 
       const mapTypes = {
         map: {
@@ -80,6 +83,21 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           console.error('Error parsing GeoJSONs:', error);
         }
       }
+
+      // Adiciona a animação de zoom ao rolar a página
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const scrollY = window.scrollY;
+            const sectionHeight = entry.target.offsetHeight;
+            const progress = (scrollY % sectionHeight) / sectionHeight;
+            const newZoom = zoom + progress * 3; // Ajuste o fator de zoom conforme necessário
+            map.setZoom(newZoom);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      observer.observe(mapElement.closest('section'));
     });
   }
 
