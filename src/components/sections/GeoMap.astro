@@ -189,6 +189,13 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
               easeLinearity: 0.25,
             });
           }
+        } else if (targetIndex === -1) {
+          // Retorna à visualização inicial quando não há camada
+          map.setView([latitude, longitude], zoom, {
+            animate: true,
+            duration: 1,
+            easeLinearity: 0.25,
+          });
         }
 
         currentLayerIndex = targetIndex;
@@ -203,16 +210,18 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       }
 
       // Função para verificar o scroll e animar para a próxima ou anterior camada
+      let lastVisibleLayerIndex = -1;
+
       function resetMapState() {
-        // Remove todas as camadas GeoJSON
-        geoJsonLayers.forEach(layer => {
-          if (map.hasLayer(layer)) {
+        // Remove todas as camadas GeoJSON, exceto a última visível
+        geoJsonLayers.forEach((layer, index) => {
+          if (index !== lastVisibleLayerIndex && map.hasLayer(layer)) {
             map.removeLayer(layer);
           }
         });
 
         // Reseta o índice da camada atual
-        currentLayerIndex = -1;
+        currentLayerIndex = lastVisibleLayerIndex;
 
         // Limpa a fila de transição
         transitionQueue = [];
@@ -220,7 +229,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         // Reseta a visualização do mapa para o estado inicial
         map.setView([latitude, longitude], zoom);
 
-        console.log('Map state reset');
+        console.log('Map state reset, keeping last visible layer');
       }
 
       function checkScrollAndAnimate(scrollDirection) {
@@ -244,8 +253,25 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
               animateToLayer(targetIndex, scrollDirection);
             }
           }
-        } else if (scrollProgress < 0 || scrollProgress > 1) {
-          // Zera o processo quando o mapa sai da visibilidade
+
+          // Atualiza o índice da última camada visível
+          if (targetIndex > lastVisibleLayerIndex) {
+            lastVisibleLayerIndex = targetIndex;
+          }
+        } else if (scrollProgress < 0) {
+          // Inicia a animação reversa quando o mapa fica totalmente visível
+          if (currentLayerIndex !== -1) {
+            animateToLayer(-1, 'up');
+          }
+        } else if (scrollProgress > 1) {
+          // Mantém a última camada visível quando o mapa sai da tela
+          if (currentLayerIndex !== lastVisibleLayerIndex) {
+            animateToLayer(lastVisibleLayerIndex, 'down');
+          }
+        }
+
+        // Reseta o estado apenas quando o mapa sai completamente da visão
+        if (scrollProgress < -0.5 || scrollProgress > 1.5) {
           resetMapState();
         }
       }
