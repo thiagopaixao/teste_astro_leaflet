@@ -69,7 +69,7 @@ function updateMapData() {
     latitude: center.lat,
     longitude: center.lng,
     zoom: map.getZoom(),
-    geojson: JSON.stringify(geojsonData)
+    geojson: JSON.stringify(geojsonData, null, 2)
   };
   
   value = newValue;
@@ -78,7 +78,8 @@ function updateMapData() {
 
 function exportGeoJSON() {
   const geojsonData = drawnItems.toGeoJSON();
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojsonData, null, 2));
+  const formattedGeoJSON = JSON.stringify(geojsonData, null, 2);
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(formattedGeoJSON);
   const downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute("href", dataStr);
   downloadAnchorNode.setAttribute("download", "map_data.geojson");
