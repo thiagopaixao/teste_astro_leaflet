@@ -111,7 +111,6 @@ sections:
           }
         ]
       }
-    geomanEditorLink: rere
   - type: text
     content: |-
       ## Prepare-se para a Aventura
@@ -119,6 +118,104 @@ sections:
       Seja você um amante da natureza, um entusiasta da cultura ou simplesmente alguém em busca de novas experiências, o Brasil tem algo especial para oferecer. Use este guia interativo para planejar sua próxima aventura e descobrir as maravilhas deste país incrível.
 
       Está pronto para começar sua jornada? Explore as seções acima e deixe-se encantar pela magia do Brasil!
+  - type: map
+    latitude: -14
+    longitude: -51
+    zoom: 4
+    geojson: |-
+      {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -59.941406,
+                -5.703448
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -43.505859,
+                -5.003394
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -36.826172,
+                -7.275292
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -45.791016,
+                -12.983148
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -45.703125,
+                -18.895893
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -55.107422,
+                -14.349548
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -52.294922,
+                -23.885838
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -52.646484,
+                -30.221102
+              ]
+            }
+          }
+        ]
+      }
   - type: footer
     content: © 2024 Descubra o Brasil. Todos os direitos reservados. | Desenvolvido com ❤️ por entusiastas do Brasil
 ---
