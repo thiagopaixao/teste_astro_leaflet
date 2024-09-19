@@ -7,9 +7,10 @@ interface Props {
   zoom: number;
   geojson?: string;
   id: string;
+  mapType: 'map' | 'topology' | 'satellite';
 }
 
-const { title, content, latitude, longitude, zoom, geojson, id } = Astro.props;
+const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astro.props;
 ---
 
 <section class="relative w-full h-screen">
@@ -44,8 +45,25 @@ const { title, content, latitude, longitude, zoom, geojson, id } = Astro.props;
         zoomControl: false  // Desativa o controle de zoom padrão
       }).setView([latitude, longitude], zoom);
 
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      const mapTypes = {
+        map: {
+          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        },
+        topology: {
+          url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        },
+        satellite: {
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }
+      };
+
+      const selectedMapType = mapTypes[mapElement.dataset.maptype || 'map'];
+
+      L.tileLayer(selectedMapType.url, {
+        attribution: selectedMapType.attribution
       }).addTo(map);
 
       // Adiciona o controle de zoom no canto superior direito
