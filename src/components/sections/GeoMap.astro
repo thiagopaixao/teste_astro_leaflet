@@ -13,14 +13,15 @@ interface Props {
 const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = Astro.props;
 ---
 
-<section class="relative w-full h-screen sticky top-0">
-  <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
-    <h2 class="text-3xl font-bold mb-4">{title}</h2>
-    <div class="prose max-w-none mb-4 text-white" set:html={content} />
+<section class="relative w-full h-screen">
+  <div class="sticky top-0 w-full h-screen">
+    <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
+      <h2 class="text-3xl font-bold mb-4">{title}</h2>
+      <div class="prose max-w-none mb-4 text-white" set:html={content} />
+    </div>
+    <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons?.map(g => g.geojson))} data-typelayer={typelayer}></div>
   </div>
-  <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons?.map(g => g.geojson))} data-typelayer={typelayer}></div>
 </section>
-<div class="h-screen"></div> <!-- Espaço adicional para permitir o scroll -->
 
 <style>
   .prose :global(*) {
@@ -183,7 +184,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       function checkScrollAndAnimate() {
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const scrollProgress = (viewportHeight - mapRect.top) / viewportHeight;
+        const scrollProgress = (viewportHeight - mapRect.top) / (viewportHeight + mapRect.height);
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
@@ -209,6 +210,30 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
         lastScrollTop = st <= 0 ? 0 : st; // Para navegadores móveis
       });
+
+      // Função para verificar se o mapa está completamente fora da visualização
+      function isMapOutOfView() {
+        const mapRect = mapElement.getBoundingClientRect();
+        return mapRect.bottom <= 0;
+      }
+
+      // Modifica a função checkScrollAndAnimate para permitir o scroll após o mapa
+      function checkScrollAndAnimate() {
+        if (isMapOutOfView()) {
+          return; // Permite o scroll normal após o mapa
+        }
+
+        const mapRect = mapElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const scrollProgress = (viewportHeight - mapRect.top) / (viewportHeight + mapRect.height);
+
+        if (scrollProgress >= 0 && scrollProgress <= 1) {
+          const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
+          if (targetIndex !== currentLayerIndex) {
+            animateToLayer(targetIndex);
+          }
+        }
+      }
 
       // Função para manter sempre uma camada GeoJSON visível
       function ensureVisibleLayer() {
