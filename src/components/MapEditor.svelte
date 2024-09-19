@@ -84,13 +84,17 @@ function openGeoman() {
   const geomanWindow = window.open(url, '_blank', 'width=800,height=600');
 
   if (geomanWindow) {
-    window.addEventListener('message', (event) => {
+    const handleMessage = (event) => {
       if (event.source === geomanWindow) {
         value = { ...value, ...event.data };
         updateMap();
         dispatch('change', value);
       }
-    });
+    };
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   } else {
     console.error('Não foi possível abrir a janela do Geoman Editor');
   }

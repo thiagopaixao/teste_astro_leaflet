@@ -11,7 +11,6 @@ import Layout from '../layouts/Layout.astro';
 
     let map;
     let drawnItems;
-
     let mapInitialized = false;
 
     function initializeMap() {
@@ -27,14 +26,17 @@ import Layout from '../layouts/Layout.astro';
           "features": []
         });
 
-        map = L.map('map').setView([lat, lng], zoom);
+        map = L.map('map', {
+          center: [lat, lng],
+          zoom: zoom,
+          layers: [
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors'
+            })
+          ]
+        });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
+        drawnItems = new L.FeatureGroup().addTo(map);
 
         map.pm.addControls({
           position: 'topleft',
@@ -83,7 +85,9 @@ import Layout from '../layouts/Layout.astro';
     }
 
     window.addEventListener('error', handleError);
-    window.addEventListener('load', initializeMap);
+    window.addEventListener('load', () => {
+      setTimeout(initializeMap, 100); // Pequeno atraso para garantir que o DOM esteja pronto
+    });
 
     window.exportGeoJSON = function() {
       const geoJSONData = drawnItems.toGeoJSON();
