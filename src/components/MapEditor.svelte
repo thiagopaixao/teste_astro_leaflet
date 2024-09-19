@@ -82,12 +82,18 @@ function updateMapData() {
 }
 
 function exportGeoJSON() {
-  const drawnLayers = map.pm.getGeomanDrawLayers(true);
-  const geojsonData = drawnLayers.toGeoJSON();
+  const layers = findLayers(map);
+  const geojsonData = {
+    type: 'FeatureCollection',
+    features: layers.map(layer => layer.toGeoJSON())
+  };
   const formattedGeoJSON = JSON.stringify(geojsonData, null, 2);
+  
+  // Atualiza o valor da caixa de texto
   value = { ...value, geojson: formattedGeoJSON };
   dispatch('change', value);
 
+  // Cria o arquivo para download
   const blob = new Blob([formattedGeoJSON], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const downloadAnchorNode = document.createElement('a');
