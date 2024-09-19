@@ -218,6 +218,8 @@ sections:
         ]
       }
     mapType: satellite
+    title: "Visão de Satélite do Brasil"
+    content: "Explore o Brasil de uma perspectiva única com esta visão de satélite. Observe as vastas florestas, os rios serpenteantes e as cidades que pontuam nossa paisagem diversificada."
   - type: footer
     content: © 2024 Descubra o Brasil. Todos os direitos reservados. | Desenvolvido com ❤️ por entusiastas do Brasil
 ---
