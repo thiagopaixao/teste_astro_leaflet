@@ -102,10 +102,14 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
             // Remove o GeoJSON anterior com fade out
             if (geojsonLayers.length > 0) {
               const oldLayer = geojsonLayers[0];
-              oldLayer.setStyle({ opacity: 0, fillOpacity: 0 });
+              oldLayer.eachLayer(layer => {
+                if (layer.setStyle) {
+                  layer.setStyle({ opacity: 0, fillOpacity: 0 });
+                }
+              });
               setTimeout(() => {
                 map.removeLayer(oldLayer);
-              }, 500); // Tempo de transição
+              }, 1000); // Tempo de transição aumentado para 1 segundo
             }
 
             // Adiciona o novo GeoJSON com fade in
@@ -113,15 +117,22 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
               const newLayer = L.geoJSON(geojsons[geojsonIndex], {
                 style: {
                   opacity: 0,
-                  fillOpacity: 0
+                  fillOpacity: 0,
+                  weight: 2,
+                  color: "#ff7800",
+                  fillColor: "#ff7800"
                 }
               }).addTo(map);
 
               setTimeout(() => {
-                newLayer.setStyle({
-                  opacity: 1,
-                  fillOpacity: 0.2,
-                  transition: 'opacity 0.5s, fill-opacity 0.5s'
+                newLayer.eachLayer(layer => {
+                  if (layer.setStyle) {
+                    layer.setStyle({
+                      opacity: 1,
+                      fillOpacity: 0.2,
+                      transition: 'opacity 1s ease-in-out, fill-opacity 1s ease-in-out'
+                    });
+                  }
                 });
               }, 50);
 
