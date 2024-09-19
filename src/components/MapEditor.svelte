@@ -46,7 +46,10 @@ onMount(() => {
 
   window.addEventListener('message', (event) => {
     if (event.data && event.data.geojson) {
-      value = event.data;
+      value = {
+        ...value,
+        ...event.data
+      };
       updateMap();
       dispatch('change', value);
     }
