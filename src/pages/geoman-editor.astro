@@ -62,7 +62,7 @@ import Layout from '../layouts/Layout.astro';
         modal.innerHTML = `
           <div class="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full">
             <h2 class="text-2xl font-bold mb-4">GeoJSON Exportado</h2>
-            <textarea id="geoJsonOutput" class="w-full h-64 p-2 border rounded mb-4" readonly>${jsonString}</textarea>
+            <textarea id="geoJsonOutput" class="w-full h-64 p-2 border rounded mb-4" readonly></textarea>
             <div class="flex justify-between">
               <button id="copyButton" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Copiar GeoJSON</button>
               <button id="closeButton" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition-colors">Fechar</button>
@@ -71,6 +71,9 @@ import Layout from '../layouts/Layout.astro';
         `;
         
         document.body.appendChild(modal);
+        
+        // Definir o valor do textarea após o modal ser adicionado ao DOM
+        document.getElementById('geoJsonOutput').value = jsonString;
         
         document.getElementById('copyButton').addEventListener('click', () => {
           const textarea = document.getElementById('geoJsonOutput');
