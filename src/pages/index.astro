@@ -25,6 +25,7 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
         case 'map':
           return <GeoMap 
             key={`map-${index}`}
+            id={`map-${index}`}
             latitude={section.latitude || -26.0793776} 
             longitude={section.longitude || -53.0789724} 
             zoom={section.zoom || 4}
