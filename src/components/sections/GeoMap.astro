@@ -72,6 +72,18 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
       // Adiciona um atributo data-maptype ao elemento do mapa
       mapElement.setAttribute('data-maptype', mapType);
 
+      // Adiciona um controle de camadas para alternar entre os tipos de mapa
+      const baseLayers = {
+        "Mapa": L.tileLayer(mapTypes.map.url, { attribution: mapTypes.map.attribution }),
+        "Topografia": L.tileLayer(mapTypes.topology.url, { attribution: mapTypes.topology.attribution }),
+        "Satélite": L.tileLayer(mapTypes.satellite.url, { attribution: mapTypes.satellite.attribution })
+      };
+
+      L.control.layers(baseLayers).addTo(map);
+
+      // Define a camada inicial com base no mapType
+      baseLayers[mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite"].addTo(map);
+
       // Adiciona o controle de zoom no canto superior direito
       L.control.zoom({
         position: 'topright'
