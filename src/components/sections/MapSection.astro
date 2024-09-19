@@ -11,3 +11,9 @@ const { latitude, longitude, zoom, geojson } = Astro.props;
     <MapEditor client:load {latitude} {longitude} {zoom} {geojson} />
   </div>
 </section>
+
+<script>
+  window.addEventListener('error', function(event) {
+    console.log('Erro capturado:', event.error);
+  });
+</script>
