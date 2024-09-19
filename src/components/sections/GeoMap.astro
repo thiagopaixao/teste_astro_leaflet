@@ -87,6 +87,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       let lastScrollY = window.scrollY;
       let ticking = false;
 
+      let currentGeojsonIndex = -1;
+
       function updateMap() {
         const rect = section.getBoundingClientRect();
         const sectionHeight = rect.height;
@@ -94,17 +96,38 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         const scrollProgress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight);
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
-          // Calcula qual GeoJSON deve ser exibido com base no progresso do scroll
           const geojsonIndex = Math.floor(scrollProgress * geojsons.length);
           
-          // Remove todos os GeoJSONs existentes
-          geojsonLayers.forEach(layer => map.removeLayer(layer));
-          geojsonLayers = [];
+          if (geojsonIndex !== currentGeojsonIndex) {
+            // Remove o GeoJSON anterior com fade out
+            if (geojsonLayers.length > 0) {
+              const oldLayer = geojsonLayers[0];
+              oldLayer.setStyle({ opacity: 0, fillOpacity: 0 });
+              setTimeout(() => {
+                map.removeLayer(oldLayer);
+              }, 500); // Tempo de transição
+            }
 
-          // Adiciona apenas o GeoJSON correspondente ao índice atual
-          if (geojsonIndex < geojsons.length) {
-            const newLayer = L.geoJSON(geojsons[geojsonIndex]).addTo(map);
-            geojsonLayers.push(newLayer);
+            // Adiciona o novo GeoJSON com fade in
+            if (geojsonIndex < geojsons.length) {
+              const newLayer = L.geoJSON(geojsons[geojsonIndex], {
+                style: {
+                  opacity: 0,
+                  fillOpacity: 0
+                }
+              }).addTo(map);
+
+              setTimeout(() => {
+                newLayer.setStyle({
+                  opacity: 1,
+                  fillOpacity: 0.2,
+                  transition: 'opacity 0.5s, fill-opacity 0.5s'
+                });
+              }, 50);
+
+              geojsonLayers = [newLayer];
+              currentGeojsonIndex = geojsonIndex;
+            }
           }
         }
 
