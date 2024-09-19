@@ -217,7 +217,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         console.log('Map state reset, keeping last visible layer');
       }
 
-      function checkScrollAndAnimate(scrollDirection) {
+      function checkScrollAndAnimate() {
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         const sectionHeight = mapElement.closest('section').offsetHeight;
@@ -231,12 +231,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           targetIndex = Math.max(-1, Math.min(targetIndex, numLayers - 1));
 
           if (targetIndex !== currentLayerIndex) {
-            console.log(`Queueing transition to GeoJSON layer ${targetIndex}`);
-            if (isTransitioning) {
-              transitionQueue.push(targetIndex);
-            } else {
-              animateToLayer(targetIndex, scrollDirection);
-            }
+            animateToLayer(targetIndex);
           }
 
           // Atualiza o índice da última camada visível
@@ -244,14 +239,14 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
             lastVisibleLayerIndex = targetIndex;
           }
         } else if (scrollProgress < 0) {
-          // Inicia a animação reversa quando o mapa fica totalmente visível
+          // Retorna à visualização inicial quando o mapa fica totalmente visível
           if (currentLayerIndex !== -1) {
-            animateToLayer(-1, 'up');
+            animateToLayer(-1);
           }
         } else if (scrollProgress > 1) {
           // Mantém a última camada visível quando o mapa sai da tela
           if (currentLayerIndex !== lastVisibleLayerIndex) {
-            animateToLayer(lastVisibleLayerIndex, 'down');
+            animateToLayer(lastVisibleLayerIndex);
           }
         }
 
