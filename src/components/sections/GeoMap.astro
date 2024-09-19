@@ -60,7 +60,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         }
       };
 
-      const mapType = mapElement.dataset.maptype as 'map' | 'topology' | 'satellite' || 'map';
+      const mapType = (mapElement.dataset.maptype as 'map' | 'topology' | 'satellite') || 'map';
       const selectedMapType = mapTypes[mapType];
 
       console.log(`Map ${mapElement.id} initialized with type: ${mapType}`);
