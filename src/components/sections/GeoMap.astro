@@ -163,13 +163,10 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       let transitionQueue = [];
       let isTransitioning = false;
 
-      function animateToLayer(targetIndex, scrollDirection) {
-        if (geojsons.length === 0 || isTransitioning) {
-          transitionQueue.push(targetIndex);
+      function animateToLayer(targetIndex) {
+        if (geojsons.length === 0) {
           return;
         }
-
-        isTransitioning = true;
 
         // Remove a camada atual
         if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length && geoJsonLayers[currentLayerIndex]) {
@@ -184,29 +181,17 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
             // Ajusta a visualização para a nova camada
             map.fitBounds(newLayer.getBounds(), {
-              animate: true,
-              duration: 1,
-              easeLinearity: 0.25,
+              animate: false
             });
           }
         } else if (targetIndex === -1) {
           // Retorna à visualização inicial quando não há camada
           map.setView([latitude, longitude], zoom, {
-            animate: true,
-            duration: 1,
-            easeLinearity: 0.25,
+            animate: false
           });
         }
 
         currentLayerIndex = targetIndex;
-
-        setTimeout(() => {
-          isTransitioning = false;
-          if (transitionQueue.length > 0) {
-            const nextIndex = transitionQueue.shift();
-            animateToLayer(nextIndex, scrollDirection);
-          }
-        }, 1000);
       }
 
       // Função para verificar o scroll e animar para a próxima ou anterior camada
