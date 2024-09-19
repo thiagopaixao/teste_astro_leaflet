@@ -150,10 +150,16 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       }
 
       // Função para animar a transição entre camadas GeoJSON
-      function animateToLayer(targetIndex) {
-        if (geojsons.length === 0 || isAnimating) return;
+      let transitionQueue = [];
+      let isTransitioning = false;
 
-        isAnimating = true;
+      function animateToLayer(targetIndex) {
+        if (geojsons.length === 0 || isTransitioning) {
+          transitionQueue.push(targetIndex);
+          return;
+        }
+
+        isTransitioning = true;
 
         // Remove a camada atual
         if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length && geoJsonLayers[currentLayerIndex]) {
@@ -176,7 +182,11 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
 
         setTimeout(() => {
-          isAnimating = false;
+          isTransitioning = false;
+          if (transitionQueue.length > 0) {
+            const nextIndex = transitionQueue.pop();
+            animateToLayer(nextIndex);
+          }
         }, 1500);
       }
 
@@ -189,7 +199,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const numLayers = geojsons.length;
-          const firstLayerThreshold = 0.8; // Aumentado para 0.8 para maior atraso no carregamento do primeiro GeoJSON
+          const firstLayerThreshold = 0.8;
           const remainingScrollSpace = 1 - firstLayerThreshold;
           const segmentSize = remainingScrollSpace / (numLayers - 1);
 
@@ -210,8 +220,12 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
           }
 
           if (targetIndex !== currentLayerIndex) {
-            console.log(`Transitioning to GeoJSON layer ${targetIndex}`);
-            animateToLayer(targetIndex);
+            console.log(`Queueing transition to GeoJSON layer ${targetIndex}`);
+            if (isTransitioning) {
+              transitionQueue = [targetIndex]; // Substitui a fila existente
+            } else {
+              animateToLayer(targetIndex);
+            }
           }
         }
       }
