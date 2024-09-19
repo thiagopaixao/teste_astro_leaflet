@@ -32,7 +32,6 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
 <script>
   import L from 'leaflet';
-  import 'leaflet/dist/leaflet.css';
 
   function initMap() {
     const mapElements = document.querySelectorAll('.geo-map');
@@ -44,19 +43,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       const zoom = Number(mapElement.dataset.zoom);
       const geojsonsString = mapElement.dataset.geojsons;
 
-      const map = L.map(mapElement.id, {
-        zoomControl: false,
-        scrollWheelZoom: false,
-        doubleClickZoom: false,
-        touchZoom: false,
-        boxZoom: false,
-        keyboard: false,
-        zoomSnap: 0,
-        zoomDelta: 0,
-        dragging: false,
-        minZoom: zoom,
-        maxZoom: zoom
-      }).setView([latitude, longitude], zoom);
+      const map = L.map(mapElement.id).setView([latitude, longitude], zoom);
 
       const mapTypes = {
         map: {
@@ -76,286 +63,23 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       const typelayer = mapElement.dataset.typelayer || 'map';
       const selectedMapType = mapTypes[typelayer];
 
+      L.tileLayer(selectedMapType.url, {
+        attribution: selectedMapType.attribution
+      }).addTo(map);
+
       console.log(`Map ${mapElement.id} initialized with type: ${typelayer}`);
-
-      // Adiciona um controle de camadas para alternar entre os tipos de mapa
-      // Cria todas as camadas
-      const baseLayers = {
-        "Mapa": L.tileLayer(mapTypes.map.url, { attribution: mapTypes.map.attribution }),
-        "Topografia": L.tileLayer(mapTypes.topology.url, { attribution: mapTypes.topology.attribution }),
-        "Satélite": L.tileLayer(mapTypes.satellite.url, { attribution: mapTypes.satellite.attribution })
-      };
-
-      // Determina qual camada deve ser adicionada por padrão
-      const defaultLayer = typelayer === 'map' ? "Mapa" : typelayer === 'topology' ? "Topografia" : "Satélite";
-
-      // Adiciona a camada padrão ao mapa
-      baseLayers[defaultLayer].addTo(map);
-
-      // Adiciona o controle de camadas, marcando a camada padrão como selecionada
-      const layerControl = L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
-
-      // Marca a camada padrão como selecionada no controle de camadas
-      Object.keys(baseLayers).forEach(layerName => {
-        if (layerName === defaultLayer) {
-          map.addLayer(baseLayers[layerName]);
-        } else {
-          map.removeLayer(baseLayers[layerName]);
-        }
-      });
-
-      let geoJsonLayers = [];
-      let currentLayerIndex = -1;
-      let isAnimating = false;
-      let geojsons = [];
 
       if (geojsonsString) {
         try {
-          geojsons = JSON.parse(geojsonsString);
-          console.log('Parsed GeoJSONs:', geojsons);
+          const geojsons = JSON.parse(geojsonsString);
+          geojsons.forEach(geojsonStr => {
+            const geojson = JSON.parse(geojsonStr);
+            L.geoJSON(geojson).addTo(map);
+          });
         } catch (error) {
           console.error('Error parsing GeoJSONs:', error);
         }
-      } else {
-        console.log('No GeoJSONs found');
       }
-
-      function loadGeoJsonLayer(index) {
-        if (index >= 0 && index < geojsons.length) {
-          try {
-            const geojson = JSON.parse(geojsons[index]);
-            console.log('Loading GeoJSON:', geojson);
-            const layer = L.geoJSON(geojson, {
-              style: function (feature) {
-                return {
-                  color: "#ff7800",
-                  weight: 5,
-                  opacity: 0.65
-                };
-              },
-              onEachFeature: function (feature, layer) {
-                if (feature.properties && feature.properties.popupContent) {
-                  layer.bindPopup(feature.properties.popupContent);
-                }
-              }
-            });
-            geoJsonLayers[index] = layer;
-            return layer;
-          } catch (error) {
-            console.error('Error parsing individual GeoJSON:', error);
-            return null;
-          }
-        }
-        return null;
-      }
-
-      // Carrega todos os GeoJSONs inicialmente
-      function loadAllGeoJsonLayers() {
-        geojsons.forEach((_, index) => {
-          loadGeoJsonLayer(index);
-        });
-      }
-
-      // Chama a função para carregar todos os GeoJSONs
-      loadAllGeoJsonLayers();
-
-      // Função para animar a transição entre camadas GeoJSON
-      let transitionQueue = [];
-      let isTransitioning = false;
-
-      function animateToLayer(targetIndex) {
-        if (geojsons.length === 0) {
-          return;
-        }
-
-        const fadeOutDuration = 300; // Duração da animação de fade out em milissegundos
-        const fadeInDuration = 300; // Duração da animação de fade in em milissegundos
-
-        // Função para fazer o fade out de uma camada
-        function fadeOutLayer(layer, callback) {
-          let opacity = 1;
-          const fadeOutInterval = setInterval(() => {
-            opacity -= 0.1;
-            if (opacity <= 0) {
-              clearInterval(fadeOutInterval);
-              map.removeLayer(layer);
-              callback();
-            } else {
-              layer.setStyle({ opacity: opacity, fillOpacity: opacity / 2 });
-            }
-          }, fadeOutDuration / 10);
-        }
-
-        // Função para fazer o fade in de uma camada
-        function fadeInLayer(layer) {
-          let opacity = 0;
-          layer.setStyle({ opacity: 0, fillOpacity: 0 });
-          map.addLayer(layer);
-          const fadeInInterval = setInterval(() => {
-            opacity += 0.1;
-            if (opacity >= 1) {
-              clearInterval(fadeInInterval);
-            } else {
-              layer.setStyle({ opacity: opacity, fillOpacity: opacity / 2 });
-            }
-          }, fadeInDuration / 10);
-        }
-
-        // Remove a camada atual com fade out
-        if (currentLayerIndex >= 0 && currentLayerIndex < geoJsonLayers.length && geoJsonLayers[currentLayerIndex]) {
-          fadeOutLayer(geoJsonLayers[currentLayerIndex], () => {
-            // Adiciona a nova camada com fade in
-            if (targetIndex >= 0 && targetIndex < geoJsonLayers.length) {
-              const newLayer = geoJsonLayers[targetIndex];
-              if (newLayer) {
-                fadeInLayer(newLayer);
-
-                // Ajusta a visualização para a nova camada
-                map.fitBounds(newLayer.getBounds(), {
-                  animate: true,
-                  duration: 0.5
-                });
-              }
-            } else if (targetIndex === -1) {
-              // Retorna à visualização inicial quando não há camada
-              map.setView([latitude, longitude], zoom, {
-                animate: true,
-                duration: 0.5
-              });
-            }
-          });
-        } else {
-          // Se não houver camada atual, apenas adiciona a nova camada com fade in
-          if (targetIndex >= 0 && targetIndex < geoJsonLayers.length) {
-            const newLayer = geoJsonLayers[targetIndex];
-            if (newLayer) {
-              fadeInLayer(newLayer);
-
-              // Ajusta a visualização para a nova camada
-              map.fitBounds(newLayer.getBounds(), {
-                animate: true,
-                duration: 0.5
-              });
-            }
-          } else if (targetIndex === -1) {
-            // Retorna à visualização inicial quando não há camada
-            map.setView([latitude, longitude], zoom, {
-              animate: true,
-              duration: 0.5
-            });
-          }
-        }
-
-        currentLayerIndex = targetIndex;
-      }
-
-      // Função para verificar o scroll e animar para a próxima ou anterior camada
-      let lastVisibleLayerIndex = -1;
-
-      function resetMapState() {
-        // Remove todas as camadas GeoJSON, exceto a última visível
-        geoJsonLayers.forEach((layer, index) => {
-          if (index !== lastVisibleLayerIndex && map.hasLayer(layer)) {
-            map.removeLayer(layer);
-          }
-        });
-
-        // Reseta o índice da camada atual
-        currentLayerIndex = lastVisibleLayerIndex;
-
-        // Limpa a fila de transição
-        transitionQueue = [];
-
-        // Reseta a visualização do mapa para o estado inicial
-        map.setView([latitude, longitude], zoom);
-
-        console.log('Map state reset, keeping last visible layer');
-      }
-
-      function checkScrollAndAnimate() {
-        const mapRect = mapElement.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const sectionHeight = mapElement.closest('section').offsetHeight;
-        const scrollProgress = (window.pageYOffset - mapRect.top + viewportHeight) / sectionHeight;
-
-        if (scrollProgress >= 0 && scrollProgress <= 1) {
-          const numLayers = geojsons.length;
-          const segmentSize = 1 / (numLayers + 1); // +1 para incluir o estado inicial sem camada
-          
-          let targetIndex = Math.floor(scrollProgress / segmentSize) - 1;
-          targetIndex = Math.max(-1, Math.min(targetIndex, numLayers - 1));
-
-          if (targetIndex !== currentLayerIndex) {
-            animateToLayer(targetIndex);
-          }
-
-          // Atualiza o índice da última camada visível
-          if (targetIndex > lastVisibleLayerIndex) {
-            lastVisibleLayerIndex = targetIndex;
-          }
-        } else if (scrollProgress < 0) {
-          // Retorna à visualização inicial quando o mapa fica totalmente visível
-          if (currentLayerIndex !== -1) {
-            animateToLayer(-1);
-          }
-        } else if (scrollProgress > 1) {
-          // Mantém a última camada visível quando o mapa sai da tela
-          if (currentLayerIndex !== lastVisibleLayerIndex) {
-            animateToLayer(lastVisibleLayerIndex);
-          }
-        }
-
-        // Reseta o estado apenas quando o mapa sai completamente da visão
-        if (scrollProgress < -0.5 || scrollProgress > 1.5) {
-          resetMapState();
-        }
-      }
-
-      let lastScrollPosition = window.pageYOffset;
-
-      function onScroll() {
-        const currentScrollPosition = window.pageYOffset;
-        const scrollDirection = currentScrollPosition > lastScrollPosition ? 'down' : 'up';
-        lastScrollPosition = currentScrollPosition;
-
-        checkScrollAndAnimate(scrollDirection);
-      }
-
-      // Adiciona o evento de scroll com throttle
-      let lastKnownScrollPosition = 0;
-      let ticking = false;
-
-      function onScroll(scrollPos) {
-        checkScrollAndAnimate();
-      }
-
-      window.addEventListener('scroll', function(e) {
-        if (!ticking) {
-          window.requestAnimationFrame(function() {
-            onScroll();
-            ticking = false;
-          });
-
-          ticking = true;
-        }
-      });
-
-      // Chama a função de animação inicialmente para garantir que a primeira camada seja exibida
-      checkScrollAndAnimate();
-
-      // Adiciona um listener para o evento 'resize' para recalcular quando a janela for redimensionada
-      window.addEventListener('resize', checkScrollAndAnimate);
-
-      // Função para redimensionar o mapa
-      function resizeMap() {
-        map.invalidateSize();
-      }
-
-      // Redimensiona o mapa quando a janela é redimensionada
-      window.addEventListener('resize', resizeMap);
-
-      // Redimensiona o mapa após um curto atraso para garantir que todos os elementos estejam carregados
-      setTimeout(resizeMap, 250);
     });
   }
 
