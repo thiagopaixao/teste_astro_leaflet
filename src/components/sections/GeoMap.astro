@@ -13,13 +13,14 @@ interface Props {
 const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = Astro.props;
 ---
 
-<section class="relative w-full h-screen">
+<section class="relative w-full h-screen sticky top-0">
   <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
     <h2 class="text-3xl font-bold mb-4">{title}</h2>
     <div class="prose max-w-none mb-4 text-white" set:html={content} />
   </div>
   <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons?.map(g => g.geojson))} data-typelayer={typelayer}></div>
 </section>
+<div class="h-screen"></div> <!-- Espaço adicional para permitir o scroll -->
 
 <style>
   .prose :global(*) {
@@ -101,11 +102,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
       });
 
-      // O controle de zoom personalizado foi removido
-
       let geoJsonLayers = [];
       let currentLayerIndex = 0;
-      let lastScrollPosition = window.pageYOffset;
       let isAnimating = false;
 
       if (geojsonsString) {
@@ -183,27 +181,16 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
       // Função para verificar o scroll e animar para a próxima ou anterior camada
       function checkScrollAndAnimate() {
-        const currentScrollPosition = window.pageYOffset;
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
+        const scrollProgress = (viewportHeight - mapRect.top) / viewportHeight;
 
-        if (mapRect.top < viewportHeight && mapRect.bottom > 0) {
-          if (currentScrollPosition > lastScrollPosition) {
-            // Scroll para baixo
-            const nextIndex = Math.min(currentLayerIndex + 1, geoJsonLayers.length - 1);
-            if (nextIndex !== currentLayerIndex) {
-              animateToLayer(nextIndex);
-            }
-          } else if (currentScrollPosition < lastScrollPosition) {
-            // Scroll para cima
-            const prevIndex = Math.max(currentLayerIndex - 1, 0);
-            if (prevIndex !== currentLayerIndex) {
-              animateToLayer(prevIndex);
-            }
+        if (scrollProgress >= 0 && scrollProgress <= 1) {
+          const targetIndex = Math.floor(scrollProgress * geoJsonLayers.length);
+          if (targetIndex !== currentLayerIndex) {
+            animateToLayer(targetIndex);
           }
         }
-
-        lastScrollPosition = currentScrollPosition;
       }
 
       // Adiciona o evento de scroll com throttle
