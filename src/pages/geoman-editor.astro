@@ -14,7 +14,10 @@ import Layout from '../layouts/Layout.astro';
       const lat = parseFloat(urlParams.get('lat')) || -14.235004;
       const lng = parseFloat(urlParams.get('lng')) || -51.92528;
       const zoom = parseInt(urlParams.get('zoom')) || 4;
-      const geojsonString = urlParams.get('geojson') || '{}';
+      const geojsonString = urlParams.get('geojson') || JSON.stringify({
+        "type": "FeatureCollection",
+        "features": []
+      });
 
       const map = L.map('map').setView([lat, lng], zoom);
 
@@ -30,12 +33,8 @@ import Layout from '../layouts/Layout.astro';
         drawCircle: false,
       });
 
-      try {
-        const geojsonData = JSON.parse(geojsonString);
-        L.geoJSON(geojsonData).addTo(drawnItems);
-      } catch (error) {
-        console.error('Erro ao analisar GeoJSON:', error);
-      }
+      const geojsonData = JSON.parse(geojsonString);
+      L.geoJSON(geojsonData).addTo(drawnItems);
 
       map.on('pm:create', updateParent);
       map.on('pm:remove', updateParent);

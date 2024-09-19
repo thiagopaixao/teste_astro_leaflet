@@ -9,7 +9,10 @@ export let value = {
   latitude: -14.235004,
   longitude: -51.92528,
   zoom: 4,
-  geojson: null
+  geojson: JSON.stringify({
+    "type": "FeatureCollection",
+    "features": []
+  })
 };
 
 let map;
@@ -31,14 +34,11 @@ onMount(() => {
     drawCircle: false,
   });
 
-  if (value.geojson) {
-    try {
-      const geojsonData = JSON.parse(value.geojson);
-      L.geoJSON(geojsonData).addTo(drawnItems);
-    } catch (error) {
-      console.error('Erro ao analisar GeoJSON:', error);
-    }
-  }
+  const geojsonData = value.geojson ? JSON.parse(value.geojson) : {
+    "type": "FeatureCollection",
+    "features": []
+  };
+  L.geoJSON(geojsonData).addTo(drawnItems);
 
   map.on('pm:create', updateMapData);
   map.on('pm:remove', updateMapData);
@@ -55,11 +55,15 @@ onMount(() => {
 
 function updateMapData() {
   const center = map.getCenter();
+  const geojsonData = drawnItems.toGeoJSON();
+  if (geojsonData.features.length === 0) {
+    geojsonData.features = [];
+  }
   const newValue = {
     latitude: center.lat,
     longitude: center.lng,
     zoom: map.getZoom(),
-    geojson: JSON.stringify(drawnItems.toGeoJSON())
+    geojson: JSON.stringify(geojsonData)
   };
   
   dispatch('change', newValue);
