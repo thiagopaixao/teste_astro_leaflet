@@ -24,7 +24,12 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
           return <Gallery images={section.images} />;
         case 'map':
           // return <MapSection latitude={section.latitude || -14.235004} longitude={section.longitude || -51.92528} zoom={section.zoom || 4} />;
-          return <GeoMap latitude={section.latitude || -26.0793776} longitude={section.longitude || -53.0789724} zoom={section.zoom || 4} />
+          return <GeoMap 
+            latitude={section.latitude || -26.0793776} 
+            longitude={section.longitude || -53.0789724} 
+            zoom={section.zoom || 4}
+            geojson={section.geojson}
+          />
         case 'footer':
           return <Footer content={section.content} />;
         default:
