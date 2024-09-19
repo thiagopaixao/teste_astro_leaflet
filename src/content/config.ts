@@ -24,7 +24,7 @@ const pageCollection = defineCollection({
           latitude: z.number(),
           longitude: z.number(),
           zoom: z.number(),
-          mapType: z.enum(['map', 'topology', 'satellite']).default('map'),
+          typelayer: z.enum(['map', 'topology', 'satellite']).default('map'),
           geojson: z.string().optional(),
         }),
         z.object({

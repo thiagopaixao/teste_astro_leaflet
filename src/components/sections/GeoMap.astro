@@ -7,10 +7,10 @@ interface Props {
   zoom: number;
   geojson?: string;
   id: string;
-  mapType: string;
+  typelayer: string;
 }
 
-const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astro.props;
+const { title, content, latitude, longitude, zoom, geojson, id, typelayer } = Astro.props;
 ---
 
 <section class="relative w-full h-screen">
@@ -18,7 +18,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
     <h2 class="text-3xl font-bold mb-4">{title}</h2>
     <div class="prose max-w-none mb-4 text-white" set:html={content} />
   </div>
-  <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson} data-maptype={mapType}></div>
+  <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson} data-typelayer={typelayer}></div>
 </section>
 
 <style>
@@ -60,10 +60,10 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         }
       };
 
-      const mapType = mapElement.dataset.maptype || 'map';
-      const selectedMapType = mapTypes[mapType];
+      const typelayer = mapElement.dataset.typelayer || 'map';
+      const selectedMapType = mapTypes[typelayer];
 
-      console.log(`Map ${mapElement.id} initialized with type: ${mapType}`);
+      console.log(`Map ${mapElement.id} initialized with type: ${typelayer}`);
 
       // Adiciona um controle de camadas para alternar entre os tipos de mapa
       // Cria todas as camadas
@@ -74,7 +74,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
       };
 
       // Determina qual camada deve ser adicionada por padrão
-      const defaultLayer = mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite";
+      const defaultLayer = typelayer === 'map' ? "Mapa" : typelayer === 'topology' ? "Topografia" : "Satélite";
 
       // Adiciona a camada padrão ao mapa
       baseLayers[defaultLayer].addTo(map);

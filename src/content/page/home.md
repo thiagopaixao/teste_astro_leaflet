@@ -41,7 +41,7 @@ sections:
     latitude: -14
     longitude: -51
     zoom: 4
-    mapType: map
+    typelayer: map
     geojson: |-
       {
         "type": "FeatureCollection",
@@ -123,7 +123,7 @@ sections:
     latitude: -14
     longitude: -51
     zoom: 4
-    mapType: satellite
+    typelayer: satellite
     geojson: |-
       {
         "type": "FeatureCollection",
