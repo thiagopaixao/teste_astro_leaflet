@@ -42,6 +42,7 @@ onMount(() => {
 
   map.on('pm:create', updateMapData);
   map.on('pm:remove', updateMapData);
+  map.on('pm:edit', updateMapData);
   map.on('moveend', updateMapData);
 
   const handleMessage = (event) => {
@@ -64,7 +65,11 @@ onMount(() => {
 
 function updateMapData() {
   const center = map.getCenter();
-  const geojsonData = drawnItems.toGeoJSON();
+  const layers = findLayers(map);
+  const geojsonData = {
+    type: 'FeatureCollection',
+    features: layers.map(layer => layer.toGeoJSON())
+  };
   const newValue = {
     latitude: center.lat,
     longitude: center.lng,
@@ -83,13 +88,34 @@ function exportGeoJSON() {
   value = { ...value, geojson: formattedGeoJSON };
   dispatch('change', value);
 
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(formattedGeoJSON);
+  const blob = new Blob([formattedGeoJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
   const downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("href", url);
   downloadAnchorNode.setAttribute("download", "map_data.geojson");
   document.body.appendChild(downloadAnchorNode);
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
+  URL.revokeObjectURL(url);
+}
+
+function findLayers(map) {
+  let layers = [];
+  map.eachLayer(layer => {
+    if (
+      layer instanceof L.Polyline ||
+      layer instanceof L.Marker ||
+      layer instanceof L.Circle ||
+      layer instanceof L.CircleMarker
+    ) {
+      layers.push(layer);
+    }
+  });
+
+  layers = layers.filter(layer => !!layer.pm);
+  layers = layers.filter(layer => !layer._pmTempLayer);
+
+  return layers;
 }
 
 function openGeoman() {
