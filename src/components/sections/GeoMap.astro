@@ -21,6 +21,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
     </div>
     <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons?.map(g => g.geojson))} data-typelayer={typelayer}></div>
   </div>
+  <div class="h-[300vh]"></div>
 </section>
 
 <style>
@@ -176,8 +177,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       function checkScrollAndAnimate() {
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const sectionHeight = mapElement.parentElement.parentElement.offsetHeight;
-        const scrollProgress = (window.pageYOffset - mapRect.top) / (sectionHeight - viewportHeight);
+        const sectionHeight = mapElement.parentElement.offsetHeight;
+        const scrollProgress = (window.pageYOffset - mapRect.top + viewportHeight) / sectionHeight;
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress * geoJsonLayers.length)), geoJsonLayers.length - 1);
@@ -188,16 +189,28 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       }
 
       // Adiciona o evento de scroll com throttle
+      let lastKnownScrollPosition = 0;
       let ticking = false;
-      window.addEventListener('scroll', function() {
+
+      function onScroll(scrollPos) {
+        checkScrollAndAnimate();
+      }
+
+      window.addEventListener('scroll', function(e) {
+        lastKnownScrollPosition = window.scrollY;
+
         if (!ticking) {
           window.requestAnimationFrame(function() {
-            checkScrollAndAnimate();
+            onScroll(lastKnownScrollPosition);
             ticking = false;
           });
+
           ticking = true;
         }
       });
+
+      // Chama a função de animação inicialmente para garantir que a primeira camada seja exibida
+      checkScrollAndAnimate();
 
       // Função para redimensionar o mapa
       function resizeMap() {
