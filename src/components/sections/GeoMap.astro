@@ -6,9 +6,10 @@ interface Props {
   longitude: number;
   zoom: number;
   geojson?: string;
+  id: string;
 }
 
-const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
+const { title, content, latitude, longitude, zoom, geojson, id } = Astro.props;
 ---
 
 <section class="relative w-full h-screen">
@@ -16,7 +17,7 @@ const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
     <h2 class="text-3xl font-bold mb-4">{title}</h2>
     <div class="prose max-w-none mb-4 text-white" set:html={content} />
   </div>
-  <div id="map" class="absolute inset-0" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
+  <div id={id} class="absolute inset-0" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
 </section>
 
 <style>
@@ -30,47 +31,49 @@ const { title, content, latitude, longitude, zoom, geojson } = Astro.props;
   import 'leaflet/dist/leaflet.css';
 
   function initMap() {
-    const mapElement = document.getElementById('map');
-    if (!mapElement) return;
+    const mapElements = document.querySelectorAll('[id^="map-"]');
+    mapElements.forEach((mapElement) => {
+      if (!mapElement) return;
 
-    const latitude = Number(mapElement.dataset.latitude);
-    const longitude = Number(mapElement.dataset.longitude);
-    const zoom = Number(mapElement.dataset.zoom);
-    const geojsonString = mapElement.dataset.geojson;
+      const latitude = Number(mapElement.dataset.latitude);
+      const longitude = Number(mapElement.dataset.longitude);
+      const zoom = Number(mapElement.dataset.zoom);
+      const geojsonString = mapElement.dataset.geojson;
 
-    const map = L.map('map', {
-      zoomControl: false  // Desativa o controle de zoom padrão
-    }).setView([latitude, longitude], zoom);
+      const map = L.map(mapElement.id, {
+        zoomControl: false  // Desativa o controle de zoom padrão
+      }).setView([latitude, longitude], zoom);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-    // Adiciona o controle de zoom no canto superior direito
-    L.control.zoom({
-      position: 'topright'
-    }).addTo(map);
+      // Adiciona o controle de zoom no canto superior direito
+      L.control.zoom({
+        position: 'topright'
+      }).addTo(map);
 
-    if (geojsonString) {
-      try {
-        const geojson = JSON.parse(geojsonString);
-        const geoJsonLayer = L.geoJSON(geojson).addTo(map);
-        map.fitBounds(geoJsonLayer.getBounds());
-      } catch (error) {
-        console.error('Error parsing GeoJSON:', error);
+      if (geojsonString) {
+        try {
+          const geojson = JSON.parse(geojsonString);
+          const geoJsonLayer = L.geoJSON(geojson).addTo(map);
+          map.fitBounds(geoJsonLayer.getBounds());
+        } catch (error) {
+          console.error('Error parsing GeoJSON:', error);
+        }
       }
-    }
 
-    // Função para redimensionar o mapa
-    function resizeMap() {
-      map.invalidateSize();
-    }
+      // Função para redimensionar o mapa
+      function resizeMap() {
+        map.invalidateSize();
+      }
 
-    // Redimensiona o mapa quando a janela é redimensionada
-    window.addEventListener('resize', resizeMap);
+      // Redimensiona o mapa quando a janela é redimensionada
+      window.addEventListener('resize', resizeMap);
 
-    // Redimensiona o mapa após um curto atraso para garantir que todos os elementos estejam carregados
-    setTimeout(resizeMap, 250);
+      // Redimensiona o mapa após um curto atraso para garantir que todos os elementos estejam carregados
+      setTimeout(resizeMap, 250);
+    });
   }
 
   // Initialize the map when the DOM is fully loaded
