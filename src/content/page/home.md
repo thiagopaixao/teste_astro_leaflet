@@ -43,7 +43,14 @@ sections:
     zoom: 4
     typelayer: satellite
     geojsons:
-      - geojson: '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-64.951172,-4.477856]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-46.845703,-6.83917]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-53.4375,-9.709057]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-41.308594,-12.297068]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-52.294922,-19.394068]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-53.085938,-26.509905]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-44.296875,-19.55979]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-50.888672,-13.923404]}},{"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-58.710938,-12.811801]}}]}'
+      - geojson: >-
+          {"type":"FeatureCollection","features":[
+            {"type":"Feature","properties":{"name":"Norte","popupContent":"Região Norte"},"geometry":{"type":"Point","coordinates":[-64.951172,-4.477856]}},
+            {"type":"Feature","properties":{"name":"Nordeste","popupContent":"Região Nordeste"},"geometry":{"type":"Point","coordinates":[-41.308594,-12.297068]}},
+            {"type":"Feature","properties":{"name":"Centro-Oeste","popupContent":"Região Centro-Oeste"},"geometry":{"type":"Point","coordinates":[-53.4375,-9.709057]}},
+            {"type":"Feature","properties":{"name":"Sudeste","popupContent":"Região Sudeste"},"geometry":{"type":"Point","coordinates":[-44.296875,-19.55979]}},
+            {"type":"Feature","properties":{"name":"Sul","popupContent":"Região Sul"},"geometry":{"type":"Point","coordinates":[-53.085938,-26.509905]}}
+          ]}
   - type: text
     content: |-
       ## Prepare-se para a Aventura

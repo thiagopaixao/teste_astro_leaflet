@@ -99,9 +99,11 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       if (geojsonsString) {
         try {
           const geojsons = JSON.parse(geojsonsString);
+          console.log('Parsed GeoJSONs:', geojsons); // Log para depuração
           const geoJsonLayers = geojsons.map(geojsonString => {
             try {
               const geojson = JSON.parse(geojsonString);
+              console.log('Individual GeoJSON:', geojson); // Log para depuração
               return L.geoJSON(geojson, {
                 style: function (feature) {
                   return {
@@ -109,6 +111,11 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
                     weight: 5,
                     opacity: 0.65
                   };
+                },
+                onEachFeature: function (feature, layer) {
+                  if (feature.properties && feature.properties.popupContent) {
+                    layer.bindPopup(feature.properties.popupContent);
+                  }
                 }
               }).addTo(map);
             } catch (error) {
@@ -117,6 +124,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
             }
           }).filter(layer => layer !== null);
           
+          console.log('GeoJSON Layers:', geoJsonLayers); // Log para depuração
+          
           if (geoJsonLayers.length > 0) {
             const group = L.featureGroup(geoJsonLayers);
             map.fitBounds(group.getBounds());
@@ -124,6 +133,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         } catch (error) {
           console.error('Error parsing GeoJSONs:', error);
         }
+      } else {
+        console.log('No GeoJSONs found'); // Log para depuração
       }
 
       // Função para redimensionar o mapa
