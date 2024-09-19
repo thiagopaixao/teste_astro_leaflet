@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: thiagopaixao/teste_astro_stelvia
+  repo: thiagopaixao/teste_astro_leaflet
   branch: main
 
 media_folder: "public/uploads"

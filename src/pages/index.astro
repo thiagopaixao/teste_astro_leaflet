@@ -17,11 +17,11 @@ const page = pages.length > 0 ? pages[0] : null; // Verifica se há páginas na 
     page.data.sections.map((section, index) => {
       switch (section.type) {
         case 'header':
-          return <Header backgroundImage={section.backgroundImage} title={section.title} />;
+          return <Header backgroundImage={`${import.meta.env.BASE_URL}${section.backgroundImage}`} title={section.title} />;
         case 'text':
           return <TextSection content={section.content} />;
         case 'gallery':
-          return <Gallery images={section.images} />;
+          return <Gallery images={section.images.map(img => `${import.meta.env.BASE_URL}${img}`)} />;
         case 'map':
           return <GeoMap 
             key={`map-${index}`}
