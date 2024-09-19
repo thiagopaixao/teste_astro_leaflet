@@ -44,8 +44,8 @@ onMount(() => {
   map.on('pm:remove', updateMapData);
   map.on('moveend', updateMapData);
 
-  window.addEventListener('message', (event) => {
-    if (event.data && event.data.geojson) {
+  const handleMessage = (event) => {
+    if (event.data && (event.data.geojson || event.data.latitude || event.data.longitude || event.data.zoom)) {
       value = {
         ...value,
         ...event.data
@@ -53,6 +53,12 @@ onMount(() => {
       updateMap();
       dispatch('change', value);
     }
+  };
+
+  window.addEventListener('message', handleMessage);
+
+  onDestroy(() => {
+    window.removeEventListener('message', handleMessage);
   });
 });
 

@@ -54,7 +54,11 @@ import Layout from '../layouts/Layout.astro';
         geojson: JSON.stringify(drawnItems.toGeoJSON())
       };
       
-      window.opener.postMessage(newValue, '*');
+      if (window.opener && window.opener.postMessage) {
+        window.opener.postMessage(newValue, '*');
+      } else {
+        console.log('Dados atualizados:', newValue);
+      }
     }
 
     window.exportGeoJSON = function() {
