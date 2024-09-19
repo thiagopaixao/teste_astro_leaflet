@@ -45,6 +45,7 @@ collections:
               - { label: "Longitude", name: "longitude", widget: "number", valueType: "float" }
               - { label: "Zoom", name: "zoom", widget: "number", valueType: "int" }
               - { label: "GeoJSON", name: "geojson", widget: "text", required: false, default: "{}", hint: "Insira o GeoJSON manualmente se necessário" }
+              - { label: "Tipo de Mapa", name: "mapType", widget: "select", options: ["map", "topology", "satellite"], default: "map" }
           - label: "Rodapé"
             name: "footer"
             widget: "object"
