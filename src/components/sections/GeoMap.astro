@@ -66,16 +66,19 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
       console.log(`Map ${mapElement.id} initialized with type: ${mapType}`);
 
       // Adiciona um controle de camadas para alternar entre os tipos de mapa
+      // Cria a camada base correta de acordo com o mapType
+      const baseLayer = L.tileLayer(selectedMapType.url, { attribution: selectedMapType.attribution });
+      baseLayer.addTo(map);
+
+      // Cria as outras camadas para o controle de camadas
       const baseLayers = {
         "Mapa": L.tileLayer(mapTypes.map.url, { attribution: mapTypes.map.attribution }),
         "Topografia": L.tileLayer(mapTypes.topology.url, { attribution: mapTypes.topology.attribution }),
         "Satélite": L.tileLayer(mapTypes.satellite.url, { attribution: mapTypes.satellite.attribution })
       };
 
+      // Adiciona o controle de camadas
       L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
-
-      // Define a camada inicial com base no mapType
-      baseLayers[mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite"].addTo(map);
 
       // Adiciona o controle de zoom no canto superior direito
       L.control.zoom({
