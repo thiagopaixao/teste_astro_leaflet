@@ -18,7 +18,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
     <h2 class="text-3xl font-bold mb-4">{title}</h2>
     <div class="prose max-w-none mb-4 text-white" set:html={content} />
   </div>
-  <div id={id} class="absolute inset-0" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson} data-maptype={mapType}></div>
+  <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson} data-maptype={mapType}></div>
 </section>
 
 <style>
@@ -32,7 +32,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
   import 'leaflet/dist/leaflet.css';
 
   function initMap() {
-    const mapElements = document.querySelectorAll('[id^="map-"]');
+    const mapElements = document.querySelectorAll('.geo-map');
     mapElements.forEach((mapElement) => {
       if (!mapElement) return;
 
@@ -60,17 +60,10 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         }
       };
 
-      const mapType = mapElement.dataset.maptype || 'map-6';
+      const mapType = mapElement.dataset.maptype || 'map';
       const selectedMapType = mapTypes[mapType];
 
-      const baseLayer = L.tileLayer(selectedMapType.url, {
-        attribution: selectedMapType.attribution
-      }).addTo(map);
-
       console.log(`Map ${mapElement.id} initialized with type: ${mapType}`);
-
-      // Adiciona um atributo data-maptype ao elemento do mapa
-      mapElement.setAttribute('data-maptype', mapType);
 
       // Adiciona um controle de camadas para alternar entre os tipos de mapa
       const baseLayers = {
@@ -80,9 +73,6 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
       };
 
       L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
-
-      // Remove a camada base inicial
-      map.removeLayer(baseLayer);
 
       // Define a camada inicial com base no mapType
       baseLayers[mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite"].addTo(map);
