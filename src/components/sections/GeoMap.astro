@@ -94,21 +94,16 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         const scrollProgress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight);
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
-          const newZoom = zoom + scrollProgress * 3; // Ajuste o fator de zoom conforme necessário
-          map.setView([latitude, longitude], newZoom, { animate: false });
-
-          // Carrega GeoJSONs progressivamente
-          const geojsonsToShow = Math.floor(scrollProgress * geojsons.length);
+          // Calcula qual GeoJSON deve ser exibido com base no progresso do scroll
+          const geojsonIndex = Math.floor(scrollProgress * geojsons.length);
           
-          // Remove GeoJSONs extras se estiver rolando para cima
-          while (geojsonLayers.length > geojsonsToShow) {
-            const layerToRemove = geojsonLayers.pop();
-            map.removeLayer(layerToRemove);
-          }
+          // Remove todos os GeoJSONs existentes
+          geojsonLayers.forEach(layer => map.removeLayer(layer));
+          geojsonLayers = [];
 
-          // Adiciona novos GeoJSONs se estiver rolando para baixo
-          while (geojsonLayers.length < geojsonsToShow && geojsonLayers.length < geojsons.length) {
-            const newLayer = L.geoJSON(geojsons[geojsonLayers.length]).addTo(map);
+          // Adiciona apenas o GeoJSON correspondente ao índice atual
+          if (geojsonIndex < geojsons.length) {
+            const newLayer = L.geoJSON(geojsons[geojsonIndex]).addTo(map);
             geojsonLayers.push(newLayer);
           }
         }
