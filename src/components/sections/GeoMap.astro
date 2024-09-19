@@ -188,32 +188,30 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         const scrollProgress = (window.pageYOffset - mapRect.top + viewportHeight) / sectionHeight;
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
-          // Carrega o primeiro GeoJSON com maior atraso
-          if (currentLayerIndex === -1 && scrollProgress >= 0.7) { // Aumentado de 0.5 para 0.7
-            const firstLayer = loadGeoJsonLayer(0);
-            if (firstLayer) {
-              map.addLayer(firstLayer);
-              currentLayerIndex = 0;
-              console.log('First GeoJSON layer loaded');
+          const numLayers = geojsons.length;
+          const firstLayerThreshold = 0.8; // Aumentado para 0.8 para maior atraso no carregamento do primeiro GeoJSON
+          const remainingScrollSpace = 1 - firstLayerThreshold;
+          const segmentSize = remainingScrollSpace / (numLayers - 1);
+
+          let targetIndex;
+          if (scrollProgress < firstLayerThreshold) {
+            // Carrega o primeiro GeoJSON com maior atraso
+            if (currentLayerIndex === -1 && scrollProgress >= 0.7) {
+              const firstLayer = loadGeoJsonLayer(0);
+              if (firstLayer) {
+                map.addLayer(firstLayer);
+                currentLayerIndex = 0;
+                console.log('First GeoJSON layer loaded');
+              }
             }
-          } else if (currentLayerIndex >= 0) {
-            const numLayers = geojsons.length;
-            // Ajusta o cálculo para que o primeiro GeoJSON fique visível por mais tempo
-            const firstLayerThreshold = 0.7; // Aumentado de 0.3 para 0.7
-            const remainingScrollSpace = 1 - firstLayerThreshold;
-            const segmentSize = remainingScrollSpace / (numLayers - 1);
-            
-            let targetIndex;
-            if (scrollProgress < firstLayerThreshold) {
-              targetIndex = 0;
-            } else {
-              targetIndex = Math.min(Math.max(1, Math.floor((scrollProgress - firstLayerThreshold) / segmentSize) + 1), numLayers - 1);
-            }
-            
-            if (targetIndex !== currentLayerIndex) {
-              console.log(`Transitioning to GeoJSON layer ${targetIndex}`);
-              animateToLayer(targetIndex);
-            }
+            targetIndex = 0;
+          } else {
+            targetIndex = Math.min(Math.floor((scrollProgress - firstLayerThreshold) / segmentSize) + 1, numLayers - 1);
+          }
+
+          if (targetIndex !== currentLayerIndex) {
+            console.log(`Transitioning to GeoJSON layer ${targetIndex}`);
+            animateToLayer(targetIndex);
           }
         }
       }
