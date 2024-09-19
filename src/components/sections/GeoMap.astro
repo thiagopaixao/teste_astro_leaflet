@@ -197,10 +197,20 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
             }
           } else if (currentLayerIndex >= 0) {
             const numLayers = geojsons.length;
-            const segmentSize = 1 / numLayers;
-            const targetIndex = Math.min(Math.max(0, Math.floor(scrollProgress / segmentSize)), numLayers - 1);
+            // Ajusta o cálculo para que o primeiro GeoJSON fique visível por mais tempo
+            const firstLayerThreshold = 0.3; // 30% do scroll para o primeiro GeoJSON
+            const remainingScrollSpace = 1 - firstLayerThreshold;
+            const segmentSize = remainingScrollSpace / (numLayers - 1);
+            
+            let targetIndex;
+            if (scrollProgress < firstLayerThreshold) {
+              targetIndex = 0;
+            } else {
+              targetIndex = Math.min(Math.max(1, Math.floor((scrollProgress - firstLayerThreshold) / segmentSize) + 1), numLayers - 1);
+            }
             
             if (targetIndex !== currentLayerIndex) {
+              console.log(`Transitioning to GeoJSON layer ${targetIndex}`);
               animateToLayer(targetIndex);
             }
           }
