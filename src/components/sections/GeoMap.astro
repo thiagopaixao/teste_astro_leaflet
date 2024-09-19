@@ -143,6 +143,8 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
       let geoJsonLayers = [];
       let currentLayerIndex = 0;
+      let lastScrollPosition = window.pageYOffset;
+      let isAnimating = false;
 
       if (geojsonsString) {
         try {
@@ -188,31 +190,62 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       }
 
       // Função para animar a transição entre camadas GeoJSON
-      function animateToNextLayer() {
-        if (geoJsonLayers.length <= 1) return;
+      function animateToLayer(targetIndex) {
+        if (geoJsonLayers.length <= 1 || isAnimating) return;
 
+        isAnimating = true;
         map.removeLayer(geoJsonLayers[currentLayerIndex]);
-        currentLayerIndex = (currentLayerIndex + 1) % geoJsonLayers.length;
-        map.addLayer(geoJsonLayers[currentLayerIndex]);
+        map.addLayer(geoJsonLayers[targetIndex]);
 
-        map.fitBounds(geoJsonLayers[currentLayerIndex].getBounds(), {
+        map.fitBounds(geoJsonLayers[targetIndex].getBounds(), {
           animate: true,
-          duration: 1 // duração da animação em segundos
+          duration: 1, // duração da animação em segundos
+          easeLinearity: 0.5
         });
+
+        currentLayerIndex = targetIndex;
+
+        setTimeout(() => {
+          isAnimating = false;
+        }, 1000); // Aguarda o fim da animação
       }
 
-      // Função para verificar o scroll e animar para a próxima camada
+      // Função para verificar o scroll e animar para a próxima ou anterior camada
       function checkScrollAndAnimate() {
+        const currentScrollPosition = window.pageYOffset;
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
 
         if (mapRect.top < viewportHeight && mapRect.bottom > 0) {
-          animateToNextLayer();
+          if (currentScrollPosition > lastScrollPosition) {
+            // Scroll para baixo
+            const nextIndex = Math.min(currentLayerIndex + 1, geoJsonLayers.length - 1);
+            if (nextIndex !== currentLayerIndex) {
+              animateToLayer(nextIndex);
+            }
+          } else if (currentScrollPosition < lastScrollPosition) {
+            // Scroll para cima
+            const prevIndex = Math.max(currentLayerIndex - 1, 0);
+            if (prevIndex !== currentLayerIndex) {
+              animateToLayer(prevIndex);
+            }
+          }
         }
+
+        lastScrollPosition = currentScrollPosition;
       }
 
-      // Adiciona o evento de scroll
-      window.addEventListener('scroll', checkScrollAndAnimate);
+      // Adiciona o evento de scroll com throttle
+      let ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            checkScrollAndAnimate();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
 
       // Função para redimensionar o mapa
       function resizeMap() {
