@@ -153,7 +153,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       let transitionQueue = [];
       let isTransitioning = false;
 
-      function animateToLayer(targetIndex) {
+      function animateToLayer(targetIndex, scrollDirection) {
         if (geojsons.length === 0 || isTransitioning) {
           transitionQueue.push(targetIndex);
           return;
@@ -167,31 +167,33 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         }
 
         // Carrega e adiciona a nova camada
-        const newLayer = loadGeoJsonLayer(targetIndex);
-        if (newLayer) {
-          map.addLayer(newLayer);
+        if (targetIndex >= 0) {
+          const newLayer = loadGeoJsonLayer(targetIndex);
+          if (newLayer) {
+            map.addLayer(newLayer);
 
-          // Ajusta a visualização para a nova camada
-          map.fitBounds(newLayer.getBounds(), {
-            animate: true,
-            duration: 1.5,
-            easeLinearity: 0.25,
-          });
-
-          currentLayerIndex = targetIndex;
+            // Ajusta a visualização para a nova camada
+            map.fitBounds(newLayer.getBounds(), {
+              animate: true,
+              duration: 1,
+              easeLinearity: 0.25,
+            });
+          }
         }
+
+        currentLayerIndex = targetIndex;
 
         setTimeout(() => {
           isTransitioning = false;
           if (transitionQueue.length > 0) {
-            const nextIndex = transitionQueue.pop();
-            animateToLayer(nextIndex);
+            const nextIndex = transitionQueue.shift();
+            animateToLayer(nextIndex, scrollDirection);
           }
-        }, 1500);
+        }, 1000);
       }
 
       // Função para verificar o scroll e animar para a próxima ou anterior camada
-      function checkScrollAndAnimate() {
+      function checkScrollAndAnimate(scrollDirection) {
         const mapRect = mapElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         const sectionHeight = mapElement.closest('section').offsetHeight;
@@ -199,28 +201,17 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const numLayers = geojsons.length;
-          const firstLayerThreshold = 0.8;
-          const remainingScrollSpace = 1 - firstLayerThreshold;
-          const segmentSize = remainingScrollSpace / (numLayers - 1);
-
-          let targetIndex;
-          if (scrollProgress < firstLayerThreshold) {
-            // Carrega o primeiro GeoJSON com maior atraso
-            if (scrollProgress >= 0.7) {
-              targetIndex = 0;
-            } else {
-              targetIndex = -1; // Não exibe nenhuma camada
-            }
-          } else {
-            targetIndex = Math.min(Math.floor((scrollProgress - firstLayerThreshold) / segmentSize) + 1, numLayers - 1);
-          }
+          const segmentSize = 1 / (numLayers + 1); // +1 para incluir o estado inicial sem camada
+          
+          let targetIndex = Math.floor(scrollProgress / segmentSize) - 1;
+          targetIndex = Math.max(-1, Math.min(targetIndex, numLayers - 1));
 
           if (targetIndex !== currentLayerIndex) {
             console.log(`Queueing transition to GeoJSON layer ${targetIndex}`);
             if (isTransitioning) {
-              transitionQueue = [targetIndex]; // Substitui a fila existente
+              transitionQueue.push(targetIndex);
             } else {
-              animateToLayer(targetIndex);
+              animateToLayer(targetIndex, scrollDirection);
             }
           }
         }
