@@ -4,7 +4,10 @@ import svelte from "@astrojs/svelte";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://thiagopaixao.github.io',
-  base: '/teste_astro_stelvia',
-  integrations: [tailwind(), svelte()]
+  site: 'http://localhost:4321',
+  base: '',
+  integrations: [tailwind(), svelte()],
+  build: {
+    assets: 'astro'
+  }
 });
