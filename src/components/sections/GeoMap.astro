@@ -73,11 +73,23 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         "Satélite": L.tileLayer(mapTypes.satellite.url, { attribution: mapTypes.satellite.attribution })
       };
 
-      // Adiciona a camada correta de acordo com o mapType
-      baseLayers[mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite"].addTo(map);
+      // Determina qual camada deve ser adicionada por padrão
+      const defaultLayer = mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite";
 
-      // Adiciona o controle de camadas
-      L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
+      // Adiciona a camada padrão ao mapa
+      baseLayers[defaultLayer].addTo(map);
+
+      // Adiciona o controle de camadas, marcando a camada padrão como selecionada
+      const layerControl = L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
+
+      // Marca a camada padrão como selecionada no controle de camadas
+      Object.keys(baseLayers).forEach(layerName => {
+        if (layerName === defaultLayer) {
+          map.addLayer(baseLayers[layerName]);
+        } else {
+          map.removeLayer(baseLayers[layerName]);
+        }
+      });
 
       // Adiciona o controle de zoom no canto superior direito
       L.control.zoom({
