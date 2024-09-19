@@ -16,27 +16,6 @@ sections:
       - Cidades vibrantes e históricas que contam a história do país
       - Festivais coloridos e tradições culturais fascinantes
       - Culinária diversificada e saborosa de norte a sul
-  - type: gallery
-    images:
-      - /uploads/download.jpeg
-      - /uploads/download (1).jpeg
-      - /uploads/images (2).jpeg
-      - /uploads/images (3).jpeg
-      - /uploads/images (4).jpeg
-      - /uploads/images (1).jpeg
-  - type: text
-    content: |-
-      ## Descubra Cada Região
-
-      O Brasil é dividido em cinco grandes regiões, cada uma com suas próprias características únicas:
-
-      1. **Norte**: Lar da Amazônia, com sua biodiversidade incomparável
-      2. **Nordeste**: Praias paradisíacas, cultura rica e história fascinante
-      3. **Centro-Oeste**: O coração do Brasil, com o Pantanal e a capital Brasília
-      4. **Sudeste**: Metrópoles vibrantes e montanhas imponentes
-      5. **Sul**: Influência europeia, vinhedos e belas paisagens naturais
-
-      Explore o mapa abaixo para conhecer mais sobre cada região!
   - type: map
     latitude: -14
     longitude: -51
@@ -311,6 +290,86 @@ sections:
               }
             ]
           }
+      - geojson: |-
+          {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -51.855469,
+                    -13.581921
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -49.130859,
+                    -21.534847
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -56.25,
+                        -17.14079
+                      ],
+                      [
+                        -56.25,
+                        -7.275292
+                      ],
+                      [
+                        -41.220703,
+                        -7.275292
+                      ],
+                      [
+                        -41.220703,
+                        -17.14079
+                      ],
+                      [
+                        -56.25,
+                        -17.14079
+                      ]
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+  - type: gallery
+    images:
+      - /uploads/download.jpeg
+      - /uploads/download (1).jpeg
+      - /uploads/images (2).jpeg
+      - /uploads/images (3).jpeg
+      - /uploads/images (4).jpeg
+      - /uploads/images (1).jpeg
+  - type: text
+    content: |-
+      ## Descubra Cada Região
+
+      O Brasil é dividido em cinco grandes regiões, cada uma com suas próprias características únicas:
+
+      1. **Norte**: Lar da Amazônia, com sua biodiversidade incomparável
+      2. **Nordeste**: Praias paradisíacas, cultura rica e história fascinante
+      3. **Centro-Oeste**: O coração do Brasil, com o Pantanal e a capital Brasília
+      4. **Sudeste**: Metrópoles vibrantes e montanhas imponentes
+      5. **Sul**: Influência europeia, vinhedos e belas paisagens naturais
+
+      Explore o mapa abaixo para conhecer mais sobre cada região!
   - type: text
     content: |-
       ## Prepare-se para a Aventura
