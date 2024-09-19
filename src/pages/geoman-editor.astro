@@ -13,36 +13,42 @@ import Layout from '../layouts/Layout.astro';
     let drawnItems;
 
     document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const lat = parseFloat(urlParams.get('lat')) || -14.235004;
-      const lng = parseFloat(urlParams.get('lng')) || -51.92528;
-      const zoom = parseInt(urlParams.get('zoom')) || 4;
-      const geojsonString = urlParams.get('geojson') || JSON.stringify({
-        "type": "FeatureCollection",
-        "features": []
-      });
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const lat = parseFloat(urlParams.get('lat')) || -14.235004;
+        const lng = parseFloat(urlParams.get('lng')) || -51.92528;
+        const zoom = parseInt(urlParams.get('zoom')) || 4;
+        const geojsonString = urlParams.get('geojson') || JSON.stringify({
+          "type": "FeatureCollection",
+          "features": []
+        });
 
-      map = L.map('map').setView([lat, lng], zoom);
+        map = L.map('map').setView([lat, lng], zoom);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-      drawnItems = new L.FeatureGroup();
-      map.addLayer(drawnItems);
+        drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
 
-      map.pm.addControls({
-        position: 'topleft',
-        drawCircle: false,
-      });
+        map.pm.addControls({
+          position: 'topleft',
+          drawCircle: false,
+        });
 
-      const geojsonData = JSON.parse(geojsonString);
-      L.geoJSON(geojsonData).addTo(drawnItems);
+        const geojsonData = JSON.parse(geojsonString);
+        L.geoJSON(geojsonData).addTo(drawnItems);
 
-      map.on('pm:create', updateParent);
-      map.on('pm:remove', updateParent);
-      map.on('pm:edit', updateParent);
-      map.on('moveend', updateParent);
+        map.on('pm:create', updateParent);
+        map.on('pm:remove', updateParent);
+        map.on('pm:edit', updateParent);
+        map.on('moveend', updateParent);
+
+        console.log('Mapa inicializado com sucesso');
+      } catch (error) {
+        console.error('Erro ao inicializar o mapa:', error);
+      }
     });
 
     function updateParent() {
@@ -54,12 +60,24 @@ import Layout from '../layouts/Layout.astro';
         geojson: JSON.stringify(drawnItems.toGeoJSON())
       };
       
-      if (window.opener && window.opener.postMessage) {
-        window.opener.postMessage(newValue, '*');
-      } else {
-        console.log('Dados atualizados:', newValue);
+      try {
+        if (window.opener && typeof window.opener.postMessage === 'function') {
+          window.opener.postMessage(newValue, '*');
+        } else {
+          console.log('Dados atualizados:', newValue);
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar dados:', error);
       }
     }
+
+    // Adicione esta função para lidar com erros gerais
+    function handleError(error) {
+      console.error('Erro capturado:', error);
+    }
+
+    // Adicione um listener de erro global
+    window.addEventListener('error', handleError);
 
     window.exportGeoJSON = function() {
       const geoJSONData = drawnItems.toGeoJSON();
