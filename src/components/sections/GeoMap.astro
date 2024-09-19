@@ -5,7 +5,7 @@ interface Props {
   latitude: number;
   longitude: number;
   zoom: number;
-  geojsons?: string[];
+  geojsons?: { geojson: string }[];
   id: string;
   typelayer: string;
 }
@@ -18,7 +18,7 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
     <h2 class="text-3xl font-bold mb-4">{title}</h2>
     <div class="prose max-w-none mb-4 text-white" set:html={content} />
   </div>
-  <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons)} data-typelayer={typelayer}></div>
+  <div id={id} class="absolute inset-0 geo-map" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojsons={JSON.stringify(geojsons?.map(g => g.geojson))} data-typelayer={typelayer}></div>
 </section>
 
 <style>
@@ -100,9 +100,22 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         try {
           const geojsons = JSON.parse(geojsonsString);
           const geoJsonLayers = geojsons.map(geojsonString => {
-            const geojson = JSON.parse(geojsonString);
-            return L.geoJSON(geojson).addTo(map);
-          });
+            try {
+              const geojson = JSON.parse(geojsonString);
+              return L.geoJSON(geojson, {
+                style: function (feature) {
+                  return {
+                    color: "#ff7800",
+                    weight: 5,
+                    opacity: 0.65
+                  };
+                }
+              }).addTo(map);
+            } catch (error) {
+              console.error('Error parsing individual GeoJSON:', error);
+              return null;
+            }
+          }).filter(layer => layer !== null);
           
           if (geoJsonLayers.length > 0) {
             const group = L.featureGroup(geoJsonLayers);
