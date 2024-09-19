@@ -59,7 +59,7 @@ import Layout from '../layouts/Layout.astro';
     }
 
     function updateParent() {
-      if (!map) return;
+      if (!map || !drawnItems) return;
 
       try {
         const center = map.getCenter();
@@ -80,16 +80,9 @@ import Layout from '../layouts/Layout.astro';
       }
     }
 
-    function handleError(error) {
-      console.error('Erro capturado:', error);
-    }
+    function exportGeoJSON() {
+      if (!drawnItems) return;
 
-    window.addEventListener('error', handleError);
-    window.addEventListener('load', () => {
-      setTimeout(initializeMap, 100); // Pequeno atraso para garantir que o DOM esteja pronto
-    });
-
-    window.exportGeoJSON = function() {
       const geoJSONData = drawnItems.toGeoJSON();
       const jsonString = JSON.stringify(geoJSONData, null, 2);
       
@@ -108,15 +101,11 @@ import Layout from '../layouts/Layout.astro';
       
       document.body.appendChild(modal);
       
-      // Definir o valor do textarea após o modal ser adicionado ao DOM
-      requestAnimationFrame(() => {
-        const textarea = document.getElementById('geoJsonOutput');
-        textarea.value = jsonString;
-        textarea.scrollTop = 0; // Rola para o topo do textarea
-      });
+      const textarea = document.getElementById('geoJsonOutput');
+      textarea.value = jsonString;
+      textarea.scrollTop = 0;
       
       document.getElementById('copyButton').addEventListener('click', () => {
-        const textarea = document.getElementById('geoJsonOutput');
         textarea.select();
         navigator.clipboard.writeText(textarea.value).then(() => {
           alert('GeoJSON copiado para a área de transferência!');
@@ -129,6 +118,22 @@ import Layout from '../layouts/Layout.astro';
         document.body.removeChild(modal);
       });
     }
+
+    function handleError(error) {
+      console.error('Erro capturado:', error);
+    }
+
+    window.addEventListener('error', handleError);
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        initializeMap();
+        if (map) {
+          map.invalidateSize();
+        }
+      }, 100);
+    });
+
+    window.exportGeoJSON = exportGeoJSON;
   </script>
 
   <div class="fixed top-4 right-4 z-[1000]">
