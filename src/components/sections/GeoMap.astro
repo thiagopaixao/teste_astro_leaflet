@@ -63,7 +63,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
       const mapType = mapElement.dataset.maptype || 'map';
       const selectedMapType = mapTypes[mapType];
 
-      L.tileLayer(selectedMapType.url, {
+      const baseLayer = L.tileLayer(selectedMapType.url, {
         attribution: selectedMapType.attribution
       }).addTo(map);
 
@@ -79,7 +79,10 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         "Satélite": L.tileLayer(mapTypes.satellite.url, { attribution: mapTypes.satellite.attribution })
       };
 
-      L.control.layers(baseLayers).addTo(map);
+      L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
+
+      // Remove a camada base inicial
+      map.removeLayer(baseLayer);
 
       // Define a camada inicial com base no mapType
       baseLayers[mapType === 'map' ? "Mapa" : mapType === 'topology' ? "Topografia" : "Satélite"].addTo(map);
