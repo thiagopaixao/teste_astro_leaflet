@@ -85,19 +85,37 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
       }
 
       // Adiciona a animação de zoom ao rolar a página
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const scrollY = window.scrollY;
-            const sectionHeight = entry.target.offsetHeight;
-            const progress = (scrollY % sectionHeight) / sectionHeight;
-            const newZoom = zoom + progress * 3; // Ajuste o fator de zoom conforme necessário
-            map.setZoom(newZoom);
-          }
-        });
-      }, { threshold: 0.1 });
+      const section = mapElement.closest('section');
+      let lastScrollY = window.scrollY;
+      let ticking = false;
 
-      observer.observe(mapElement.closest('section'));
+      function updateMap() {
+        const rect = section.getBoundingClientRect();
+        const sectionHeight = rect.height;
+        const viewportHeight = window.innerHeight;
+        const scrollProgress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight);
+
+        if (scrollProgress >= 0 && scrollProgress <= 1) {
+          const newZoom = zoom + scrollProgress * 3; // Ajuste o fator de zoom conforme necessário
+          map.setView([latitude, longitude], newZoom, { animate: false });
+        }
+
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        lastScrollY = window.scrollY;
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateMap();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+
+      // Inicializa o mapa com o zoom correto
+      updateMap();
     });
   }
 
