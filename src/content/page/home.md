@@ -41,7 +41,6 @@ sections:
     latitude: -14
     longitude: -51
     zoom: 4
-    mapType: satellite
     geojson: |-
       {
         "type": "FeatureCollection",
@@ -112,6 +111,7 @@ sections:
           }
         ]
       }
+    mapType: map
   - type: text
     content: |-
       ## Prepare-se para a Aventura
@@ -217,6 +217,7 @@ sections:
           }
         ]
       }
+    mapType: satellite
   - type: footer
     content: © 2024 Descubra o Brasil. Todos os direitos reservados. | Desenvolvido com ❤️ por entusiastas do Brasil
 ---
