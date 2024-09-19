@@ -18,7 +18,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
     <h2 class="text-3xl font-bold mb-4">{title}</h2>
     <div class="prose max-w-none mb-4 text-white" set:html={content} />
   </div>
-  <div id={id} class="absolute inset-0" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson}></div>
+  <div id={id} class="absolute inset-0" data-latitude={latitude} data-longitude={longitude} data-zoom={zoom} data-geojson={geojson} data-maptype={mapType}></div>
 </section>
 
 <style>
@@ -68,6 +68,9 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
       }).addTo(map);
 
       console.log(`Map ${mapElement.id} initialized with type: ${mapType}`);
+
+      // Adiciona um atributo data-maptype ao elemento do mapa
+      mapElement.setAttribute('data-maptype', mapType);
 
       // Adiciona o controle de zoom no canto superior direito
       L.control.zoom({
