@@ -4,7 +4,7 @@ backend:
   branch: main
 
 media_folder: "public/uploads"
-public_folder: "/teste_astro_leaflet/uploads"
+public_folder: "/uploads"
 
 collections:
   - name: "page"

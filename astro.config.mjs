@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import svelte from "@astrojs/svelte";
 
-const BASE_PATH = process.env.NODE_ENV === 'production' ? '/teste_astro_leaflet' : '';
+const BASE_PATH = '/teste_astro_leaflet';
 
 // https://astro.build/config
 export default defineConfig({
