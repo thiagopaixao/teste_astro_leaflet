@@ -60,7 +60,7 @@ const { title, content, latitude, longitude, zoom, geojson, id, mapType } = Astr
         }
       };
 
-      const mapType = mapElement.dataset.maptype || 'map';
+      const mapType = mapElement.dataset.maptype || 'map-6';
       const selectedMapType = mapTypes[mapType];
 
       const baseLayer = L.tileLayer(selectedMapType.url, {
