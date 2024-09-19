@@ -81,9 +81,10 @@ import Layout from '../layouts/Layout.astro';
     }
 
     function exportGeoJSON() {
-      if (!drawnItems) return;
+      if (!map) return;
 
-      const geoJSONData = drawnItems.toGeoJSON();
+      const drawnLayers = map.pm.getGeomanDrawLayers(true);
+      const geoJSONData = drawnLayers.toGeoJSON();
       const jsonString = JSON.stringify(geoJSONData, null, 2);
       
       const modal = document.createElement('div');
