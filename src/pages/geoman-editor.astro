@@ -74,8 +74,11 @@ import Layout from '../layouts/Layout.astro';
       document.getElementById('copyButton').addEventListener('click', () => {
         const textarea = document.getElementById('geoJsonOutput');
         textarea.select();
-        document.execCommand('copy');
-        alert('GeoJSON copiado para a área de transferência!');
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          alert('GeoJSON copiado para a área de transferência!');
+        }).catch(err => {
+          console.error('Erro ao copiar texto: ', err);
+        });
       });
       
       document.getElementById('closeButton').addEventListener('click', () => {
