@@ -72,19 +72,17 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
 
       console.log(`Map ${mapElement.id} initialized with type: ${typelayer}`);
 
+      let geojsons = [];
+      let geojsonLayers = [];
       if (geojsonsString) {
         try {
-          const geojsons = JSON.parse(geojsonsString);
-          geojsons.forEach(geojsonStr => {
-            const geojson = JSON.parse(geojsonStr);
-            L.geoJSON(geojson).addTo(map);
-          });
+          geojsons = JSON.parse(geojsonsString).map(geojsonStr => JSON.parse(geojsonStr));
         } catch (error) {
           console.error('Error parsing GeoJSONs:', error);
         }
       }
 
-      // Adiciona a animação de zoom ao rolar a página
+      // Adiciona a animação de zoom e carregamento de GeoJSONs ao rolar a página
       const section = mapElement.closest('section');
       let lastScrollY = window.scrollY;
       let ticking = false;
@@ -98,6 +96,21 @@ const { title, content, latitude, longitude, zoom, geojsons, id, typelayer } = A
         if (scrollProgress >= 0 && scrollProgress <= 1) {
           const newZoom = zoom + scrollProgress * 3; // Ajuste o fator de zoom conforme necessário
           map.setView([latitude, longitude], newZoom, { animate: false });
+
+          // Carrega GeoJSONs progressivamente
+          const geojsonsToShow = Math.floor(scrollProgress * geojsons.length);
+          
+          // Remove GeoJSONs extras se estiver rolando para cima
+          while (geojsonLayers.length > geojsonsToShow) {
+            const layerToRemove = geojsonLayers.pop();
+            map.removeLayer(layerToRemove);
+          }
+
+          // Adiciona novos GeoJSONs se estiver rolando para baixo
+          while (geojsonLayers.length < geojsonsToShow && geojsonLayers.length < geojsons.length) {
+            const newLayer = L.geoJSON(geojsons[geojsonLayers.length]).addTo(map);
+            geojsonLayers.push(newLayer);
+          }
         }
 
         ticking = false;
