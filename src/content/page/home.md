@@ -1,5 +1,5 @@
 ---
-title: "Descubra o Brasil: Uma Jornada Interativa"
+title: "@Descubra o Brasil: Uma Jornada Interativa"
 sections:
   - type: header
     backgroundImage: /uploads/bandeira-do-brasil-hasteada-em-texto-sobre-curiosidades-sobre-o-brasil.webp
